@@ -1,0 +1,747 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Hexoskin API Reference</title>
+
+    <link href="stylesheets/screen.css" rel="stylesheet" type="text/css" media="screen" />
+    <link href="stylesheets/print.css" rel="stylesheet" type="text/css" media="print" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+      <script src="javascripts/all.js" type="text/javascript"></script>
+
+  </head>
+
+  <body class="index">
+    <a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="images/navbar.png" />
+      </span>
+    </a>
+    <div class="tocify-wrapper">
+      <img src="images/logo.png" />
+        <div class="search">
+          <input type="text" class="search" id="input-search" placeholder="Search">
+        </div>
+        <ul class="search-results"></ul>
+      <div id="toc">
+      </div>
+        <ul class="toc-footer">
+            <li><a href='http://www.hexoskin.com/'>Hexoskin website</a></li>
+            <li><a href='http://www.hexoskin.com/pages/developers'>Sign Up for a Developer Key</a></li>
+            <li><a href='https://api.hexoskin.com/docs/page/terms-and-conditions/'>Terms and conditions</a></li>
+            <li><a href='https://groups.google.com/forum/?hl=fr#!forum/hexoskin-developer'>Developer Forum</a></li>
+        </ul>
+    </div>
+    <div class="page-wrapper">
+      <div class="dark-box"></div>
+      <div class="content">
+        <h1 id='introduction'>Introduction</h1><pre class="highlight plaintext">  _    _                    _    _
+ | |  | |                  | |  (_)
+ | |__| | _____  _____  ___| | ___ _ __  
+ |  __  |/ _ \ \/ / _ \/ __| |/ / | '_ \
+ | |  | |  __/&gt;  &lt; (_) \__ \   &lt;| | | | |
+ |_|  |_|\___/_/\_\___/|___/_|\_\_|_| |_|
+
+This column will contain helpful example queries and responses, along with additional information to help you understand how the REST API works.
+</pre>
+
+<p>This is the <strong>Hexoskin REST API</strong> reference Wiki.</p>
+
+<p>The <strong>Hexoskin REST API</strong> allows you to interact and manipulate your Hexoskin data through HTTP requests. This includes accessing biometrics and user information (both yours and your friend&rsquo;s), but also annotating data, viewing advanced reports, fetching metrics, and more. Follow along as we explore the possibilities, or if you&rsquo;re up to it, jump straight to the resources you want to access.</p>
+<h2 id='before-getting-started'>Before getting started</h2><h3 id='other-ways-to-access-your-hexoskin-data'>Other ways to access your Hexoskin data</h3>
+<p>If you ended up here, you are probably interested in doing a bit more with your Hexoskin data. However, if you just want to download the data, there might be an easier way than using our REST API. You can download all your data in binary form directly from the <a href="https://my.hexoskin.com/">dashboard</a>. We provide scripts for Python and Matlab/Octave to help you covert them in .csv files, if you need. Have a look at <a href="http://support.hexoskin.com/customer/portal/articles/1491087-can-i-download-raw-data-from-the-dashboard-">this page</a> and see if it&rsquo;s sufficient for your needs.</p>
+
+<p>Additionnally, there is a <a href="https://bitbucket.org/carre/hexoskin-api-python-client">Python client</a> available, available on Bitbucket. If you have implemented the API in another language and want to share it, be sure to write us an e-mail at <a href="mailto:api@hexoskin.com">api@hexoskin.com</a> and we&rsquo;ll put it up along with the Python client.</p>
+<h3 id='getting-an-api-key'>Getting an API key</h3>
+<p>To use this REST API, you&rsquo;ll need an API key. If you don&rsquo;t have one already, email us at <a href="mailto:api@hexoskin.com">api@hexoskin.com</a> with your project name and a quick description of what you want to do, and we&rsquo;ll happily create you one.</p>
+<h3 id='so--what39s-a-rest-api'>So&hellip; What&rsquo;s a REST API?</h3>
+<p>If you are new to using APIs, you&rsquo;re at the right place. You&rsquo;ll need to understand the concept of REST API before you can do anything. Reading this will help, but you will probably have a little homework to do if you&rsquo;re starting from scratch. If you already know what we are talking about, great! Jump ahead to the Hexoskin REST API Overview section to get started.</p>
+
+<p>For those still here, a REST API is of a way to structure data so you can access it. A website like <a href="http://hexoskin.com"><code class="prettyprint">http://hexoskin.com</code></a> is something you&rsquo;re most likely already comfortable with. It&rsquo;s a page that contains some information. To go to the developer section of the website, you can obviously click on a few button, but you can also add <a href="http://hexoskin.com/pages/developers"><code class="prettyprint">/pages/developers</code></a> to the previous URL, and you&rsquo;ll end up in the developer section. You just went from the general website to the developer-oriented page.
+A REST API works in a very similar fashion. The entry point of the REST API is <a href="https://api.hexoskin.com/api/v1/"><code class="prettyprint">https://api.hexoskin.com/api/v1/</code></a> , and appending information at the end will bring you further down. For example, asking for <a href="https://api.hexoskin.com/api/v1/account/"><code class="prettyprint">https://api.hexoskin.com/api/v1/account/</code></a> will return you your own account&rsquo;s information. Try it in your web browser! It&rsquo;ll ask you to identify yourself, because our API needs authentication. Just use your Hexoskin account as credentials. The information is returned as a JSON object, a standard format for such kind of information.</p>
+
+<p>Something quite neat about REST APIs is that you can add arguments that will modify what the REST API returns to you. For example, take <a href="https://api.hexoskin.com/api/v1/trainingroutine/"><code class="prettyprint">https://api.hexoskin.com/api/v1/trainingroutine/</code></a>. The response you receive will contain all training routines available to perform. But what if you want to look at the training routines that you have used? Well, looking at the trainingroutine documentation (<a href="https://api.hexoskin.com/docs/resource/trainingroutine/"><code class="prettyprint">https://api.hexoskin.com/docs/resource/trainingroutine/</code></a>), you see that there is a filter just for that. You can then query <a href="https://api.hexoskin.com/api/v1/trainingroutine/?using=True"><code class="prettyprint">https://api.hexoskin.com/api/v1/trainingroutine/?using=True</code></a>, and voilà, you have used a filter to modify what the REST API returns to you.
+One final thing to mention : While you can do some of the work from the web browser, there is a much bigger universe that you can access using some programming utility. Your web browser will allow you to GET information from the REST API, but using a programming language will allow you to POST information, and even PATCH some resources that you want modified. The Hexoskin REST API Overview documentation will use the cURL tool (<a href="http://curl.haxx.se/">http://curl.haxx.se/</a>) to demonstrate the REST API functionality, but you can pretty much always find an equivalent in your favorite programming language.</p>
+<h1 id='getting-started'>Getting started</h1><h2 id='overview-and-technology'>Overview and Technology</h2>
+<p>The API is built using Django and Tastypie. As such, the methods of querying the API follow the implementation patterns of Tastypie.</p>
+
+<p>We have attempted to conform to RESTful practices as much as is practical. There are a few instances where a judicious departure has been indulged but overall you can assume things will work RESTfully.</p>
+<h2 id='hexotimestamp'>HexoTimestamp</h2><pre class="highlight plaintext">For example, the 25th May of 2006 12:00:00pm is represented, in UNIX timestamps, as 1414690957. That times 256 is 362160884992, which is the 25th May 2006 12:00:00 in HexoTimestamp format.
+</pre>
+
+<p>Timestamps are represented a little differently than is usual. Instead of representing the number of seconds since Jan 1, 1970 UTC (UNIX timestamps), they represent the number of 256ths of a second since Jan 1, 1970 UTC. In other words, they are a regular timestamp multiplied by 256. All timestamps in the system are like this unless explicity noted otherwise. This modification allows the ECG&rsquo;s timestamps to be stored as integers, since it is the mosts frequent sample and it collects data at 256Hz.</p>
+<h2 id='making-requests'>Making Requests</h2>
+<p>All requests are conducted over SSL. Any non-SSL requests received are forwarded to HTTPS. All requests must be signed with a valid API key. All requests must be authenticated via basic auth with the exception of createuserrequest.</p>
+<pre class="highlight plaintext">By default, all responses are returned as JSON. However, you can set your headers manually. The accepted headers for data format are:
+
+    Accept: application/json
+    Accept: application/octet-stream
+    Accept: text/csv
+</pre>
+
+<p>Currently, only JSON is supported for non-data resources. For data resources, JSON, CSV and octet-stream are supported, though JSON have limitations (see <a href="data">data</a>). Set your headers accordingly.</p>
+
+<p>On the whole, interactions with the API behave as described in Tastypie&rsquo;s documentation. A couple of notable restrictions are:</p>
+
+<p>DELETE and PUT requests to list views are always denied.
+PUT to a detail view of a non-existant instance will not attempt to create the instance, it will result in a 404.
+POST requests to detail views are always denied.</p>
+
+<blockquote>
+<p>An example POST request would look something like this :</p>
+</blockquote>
+<pre class="highlight plaintext">POST api.hexoskin.com/api/v1/range/
+From: mailer@mail.com
+User-Agent: HTTPTool/1.0
+Content-Type: application/json
+X-HEXOTIMESTAMP: 1234567890
+X-HEXOAPIKEY: 3X4mP1ePu6licK3y
+X-HEXOSAPISIGNATURE: 3x4mPl3ShA15igN4tUr33x4mPl3ShA15igN4tUr3
+</pre>
+<pre class="highlight json"><span class="p">{</span><span class="s2">"name"</span><span class="p">:</span><span class="s2">"NewRange"</span><span class="p">,</span><span class="w">
+ </span><span class="s2">"user"</span><span class="p">:</span><span class="mi">555</span><span class="p">,</span><span class="w">
+ </span><span class="s2">"start"</span><span class="p">:</span><span class="mi">369592079271</span><span class="p">,</span><span class="w">
+ </span><span class="s2">"end"</span><span class="p">:</span><span class="mi">369592079271</span><span class="p">}</span><span class="w">
+</span></pre>
+
+<p>When performing any kind of request, they have to be signed with your public API key, the timestamp, and the URL. Your API key has a public and a private portion. Never send the private key, only use it to sign the request. Send the public key.</p>
+
+<p>To use the keys, you add three headers to each request:</p>
+
+<ul>
+<li><code class="prettyprint">X-HEXOTIMESTAMP</code>: a normal UTC timestamp.</li>
+<li><code class="prettyprint">X-HEXOAPIKEY</code>: your public key.</li>
+<li><code class="prettyprint">X-HEXOAPISIGNATURE</code>: the signature.</li>
+</ul>
+
+<p>The signature is a SHA1 hash of the the private key, timestamp, and the URL (the entire URL, including the GET arguments). The order, of course, is very important. To help you remember, it&rsquo;s alphabetic: Key, Timestamp, Url.</p>
+<h2 id='retrieving-resources'>Retrieving Resources</h2><h3 id='list-views'>List views</h3>
+<blockquote>
+<p>A typical list view, this one taken from https://api.hexoskin.com/api/v1/datatype/ looks like:</p>
+</blockquote>
+<pre class="highlight json"><span class="p">{</span><span class="w">
+    </span><span class="s2">"meta"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"limit"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"next"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/datatype/?limit=20&amp;offset=20"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"offset"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"previous"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"total_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">95</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"objects"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"dataid"</span><span class="p">:</span><span class="w"> </span><span class="mi">208</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"hexo_freq"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"info"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Recorder start annotation."</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"RECSTR_ANNOT_CHAR"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"resource_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/datatype/208/"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"dataid"</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"hexo_freq"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"info"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1 to 3 leads ECG channel(s)."</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ECG_CHANNEL_CHAR"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"resource_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/datatype/16/"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="s2">"dataid"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre>
+
+<p>To get a list of resources, you make a GET request to the resource&rsquo;s endpoint. For instance, to retrieve all the datatypes you would make the following request:</p>
+
+<p><code class="prettyprint">curl -i https://api.hexoskin.com/api/v1/datatype/</code></p>
+
+<p>Resources are represented as URIs. URIs generally conform to the following model:</p>
+
+<p><code class="prettyprint">/api/[API version]/[resource name]/</code></p>
+
+<p>For example, all the datatypes are found by issuing a GET request to:</p>
+
+<p><code class="prettyprint">/api/[API version]/[resource name]/[ID]/</code></p>
+
+<p>This is a &ldquo;list view&rdquo; because it will return a list of all the instances of that resource that the current user is allowed to see.</p>
+
+<p>Note that the resource name is singular and there is a trailing slash. Also note that by default, a list&rsquo;s limit of returned objects is 20. To change that, you have to specify the <code class="prettyprint">?limit=</code> argument in your GET query. However, it will never return more than 1000 objects.</p>
+
+<p>Requests to lists return an object containing two members; meta contains information about the results and objects contains the actual results. A sample result from <code class="prettyprint">/api/v1/datatype/?offset=20</code> is shown on the right panel.</p>
+
+<p>As you can see, the meta object tells us how to page through the data. You can roll your own paging routines of course, but you may also use the next and previous attributes of the meta object. The limit and offset variables are passed in the GET to determine which page to retrieve.</p>
+<h3 id='filtering-and-ordering'>Filtering and Ordering</h3>
+<blockquote>
+<p>https://api.hexoskin.com/api/v1/record/?device__in=HXSKIN1200001773,HXSKIN1200002049</p>
+</blockquote>
+<pre class="highlight json"><span class="p">{</span><span class="w">
+    </span><span class="s2">"meta"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"limit"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"next"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"offset"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"previous"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"total_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">13</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"objects"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TfzfJ1QAAABIWERFVi1BVVRPTXwAAAAAhQoAAEZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGAQAFAA=="</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"data_status"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+            </span><span class="s2">"dev_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"device"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/device/HXSKIN1200002115/"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"end"</span><span class="p">:</span><span class="w"> </span><span class="mi">361451358544</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"firmware_rev"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0.5"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">43419</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"n_uploaded_timelines"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"npages"</span><span class="p">:</span><span class="w"> </span><span class="mi">71710</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"resource_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/record/43419/"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"soft_protocole"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"soft_uid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"HXDEV-AUTO"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"start"</span><span class="p">:</span><span class="w"> </span><span class="mi">361446243405</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"start_date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-09-28T10:16:28+00:00"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"complete"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"user"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"athlete@hexoskin.com"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"first_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Athlete"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1511</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"last_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hexoskin"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"profile"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/profile/1460/"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"resource_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/user/1511/"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"username"</span><span class="p">:</span><span class="w"> </span><span class="s2">"athlete@hexoskin.com"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="s2">"data"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre>
+
+<p>Variables for filtering and ordering the results are also passed through the GET arguments. You can filter on any combination of fields and filter types in the Filtering Options of a resource. Refer to the &lsquo;Filtering Options&rsquo; section of endpoint&rsquo;s documentation to determine what these are for that resource. For example, records support the following filtering options:</p>
+
+<ul>
+<li>device: exact, in</li>
+<li>start: exact, range, gt, gte, lt, lte</li>
+<li>end: exact, range, gt, gte, lt, lte</li>
+<li>user: exact, in</li>
+</ul>
+
+<p>You use a filter type by passing a GET argument of <code class="prettyprint">[column]__[filtertype]=[value]</code>. So to view a list of records that contains only records that started on or after a startTimestamp of 347631277170, you would append <code class="prettyprint">startTimestamp__gte=347631277170</code> to the URL like this:</p>
+
+<p><code class="prettyprint">https://api.hexoskin.com/api/v1/record/?startTimestamp__gte=347631277170</code></p>
+
+<p>If no filtertype is specified, exact is assumed. so <code class="prettyprint">user__exact=/api/v1/user/99</code> is the same as <code class="prettyprint">user=/api/v1/user/99</code>.</p>
+
+<p>Ordering works in a similar fashion. Columns which support ordering are listed in each endpoints&#39; documentation under &lsquo;Sorting Options&rsquo;. You may pass <code class="prettyprint">order_by=</code> followed by a comma-separated list of columns. The sort order is ascending by default, to make the sort order descending prepend the column name with a <code class="prettyprint">-</code>. So to add a descending order to our record query, you would make the following request:</p>
+
+<p><code class="prettyprint">https://api.hexoskin.com/api/v1/record/?startTimestamp__gte=347631277170&amp;order_by=-startTimestamp</code></p>
+<h3 id='detail-views'>Detail views</h3>
+<blockquote>
+<p>A typical detail view, this one taken from https://api.hexoskin.com/api/v1/datatype/208/, looks like :</p>
+</blockquote>
+<pre class="highlight json"><span class="p">{</span><span class="w">
+    </span><span class="s2">"dataid"</span><span class="p">:</span><span class="w"> </span><span class="mi">208</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"freq"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"info"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Recorder start annotation."</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"RECSTR_ANNOT_CHAR"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"resource_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/datatype/208/"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre>
+
+<p>You may query a specific instance of a resource by accessing its URI. You are strongly encouraged to use the resource_uri attribute that is provided with each resource, however if you prefer to create them, they generally follow the pattern of the list URI with the ID appended:</p>
+
+<p><code class="prettyprint">/api/[API version]/[resource name]/[ID]</code></p>
+
+<p>So to access the Recorder start annotation datatype directly, you would make a GET request to:</p>
+
+<p><code class="prettyprint">https://api.hexoskin.com/api/v1/datatype/208/</code></p>
+
+<p>Note that the detail view does not contain a meta and object attribute, the resource instance is returned directly.</p>
+<h2 id='create-update-and-delete'>Create, Update and Delete</h2>
+<blockquote>
+<p>For example, a POST on annotation with the following content: {&lsquo;datatype&rsquo;: &lsquo;4096&rsquo;, &lsquo;start&rsquo;: 123456, &lsquo;user&rsquo;: 835, &lsquo;annotation&rsquo;: &lsquo;Hey guys!&rsquo;} will return</p>
+</blockquote>
+<pre class="highlight json"><span class="p">{</span><span class="w">
+    </span><span class="s2">"annotation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hey guys!"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"datatype"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/datatype/4096/"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">61353</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"last_update"</span><span class="p">:</span><span class="w"> </span><span class="mi">362161472635</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"record"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"resource_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/annotation/61353/"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"start"</span><span class="p">:</span><span class="w"> </span><span class="mi">123456</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"start_date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1970-01-01T00:08:02+00:00"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/user/835/"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre>
+
+<p>Creating an instance of a resource is achieved by issuing a POST or a PATCH request to the list view of the desired resource. If the instance is created is successfully, you will receive a 201 with the location of the new resource in the Location header. For many resources, the instance will be in the body but sometimes, primarily in cases where there is a lot of data involved, the instance representation is omitted.</p>
+
+<p>Not all resources support PATCH requests and some don&rsquo;t support creation at all! Please refer to the documentation for each resource to see what methods are supported and which fields must be supplied.</p>
+
+<p>To update an instance, you may send a PUT or a PATCH to the URI of the resource instance you wish to update. As with creation, support for different methods vary between resources, be sure to check the docs.</p>
+
+<p>If you use the PATCH method, it is not necessary to supply the entire object, you may supply only the fields you wish to change. If you use the PUT method you must provide a complete object to replace the existing one.</p>
+
+<p>Deleting, as one would expect, is done by sending a DELETE request to the resource instance&rsquo;s URI.</p>
+<h2 id='cached-content'>Cached Content</h2>
+<p>The API caches results to improve performance. If your are receiving a cached response, the X-HexoCache header will be present and will contain a timestamp (normal timestamp, not a HexoTimestamp) of the time it was cached.</p>
+<h2 id='error-codes'>Error Codes</h2><h3 id='400-bad-request'>400 Bad Request</h3>
+<p>There is a problem with the data or the format of the data supplied.</p>
+<h3 id='401-unauthorized'>401 Unauthorized</h3>
+<p>Your authentication failed.</p>
+<h3 id='403-forbidden'>403 Forbidden</h3>
+<p>Your user is not allowed to do what your are trying to do.</p>
+<h3 id='404-not-found'>404 Not Found</h3>
+<p>The resource does not exist or you are not allowed to see the resource instance requested.</p>
+<h3 id='405-method-not-allowed'>405 Method Not Allowed</h3>
+<p>You have attempted to use a method which is not allowed on the given resource.</p>
+<h3 id='500-server-error'>500 Server Error</h3>
+<p>The API has encountered an error.</p>
+<h1 id='hexoskin-rest-api-cookbook'>Hexoskin REST API Cookbook</h1>
+<p>This section contains example recipes to display some functionalities of the REST API. However, before jumping in, there will be a quick overview of the Hexoskin ecosystem (the resources and their interactions). Read away if this is interesting to you, or jump straight to the cookbook&rsquo;s recipes if you want some examples.</p>
+<h2 id='hexoskin-ecosystem-overview'>Hexoskin ecosystem overview</h2>
+<p>At this point, you might have some data collected or are looking at the demo account, and are wondering: What are the different building blocks of this API and how do they interact together? Is there anything important that I should know before getting into this? Before getting in the detailed filters and query descriptions, this section will give you a quick overview of the Hexoskin ecosystem.</p>
+
+<p>For starters, to find all hexoskin-collected data you have to specify a timestamp range and a user. When a user connects his hexoskin to the shirt, a Record is created. A Record consists, among others, of a user, and a start and end timestamp. Because of that, when asking for data, you can either query directly by timestamp, or instead ask for a record&rsquo;s data directly. Since records are always created over Hexoskin-collected data, you should never find any data outside of a record. Since it comes from the mobile phone directly, all GPS data is instead aggregated in the Ranges. Speaking of which, Ranges, often referred to as activities, are a way for you to annotate what you were doing at a given time. Ranges have, among other attributes, a name, a start and end time, and an user. When using the mobile application, setting the activity will start the GPS data collection if applicable, and that data will be available for that Range.</p>
+
+<p>All Hexoskin-collected data is separated in datatypes. Each datatype has it&rsquo;s own id, and when accessing data, you pass a list of datatype ids in the request.</p>
+
+<p>Some Ranges will trigger additional processing, making more data available to you. Depending on the Activity type of the Training routine of the range applied, HRV, sleep positions, and more become available. Refer to the Activity type documentation to see what makes which data available.</p>
+
+<p>In the API, there is a coach-athlete and friend relationship. They differ by the kind of permissions they provide to the affected users. As someone&rsquo;s friend or as his coach, his data will appear in the responses, unless you filter them out. Athletes do not see the coach&rsquo;s data.</p>
+<h2 id='getting-user-profiles'>Getting user profiles</h2>
+<blockquote>
+<p>https://api.hexoskin.com/api/v1/account/</p>
+</blockquote>
+<pre class="highlight json"><span class="p">{</span><span class="w">
+    </span><span class="s2">"meta"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"limit"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"next"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"offset"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"previous"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"total_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"objects"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"athlete@hexoskin.com"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"first_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Athlete"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1511</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"is_staff"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"last_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hexoskin"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"profile"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"date_of_birth"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1980-01-01"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fitness"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="s2">"fitness_percentile"</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"height"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.82</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"hr_max"</span><span class="p">:</span><span class="w"> </span><span class="mi">183</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"hr_recov"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"hr_rest"</span><span class="p">:</span><span class="w"> </span><span class="mi">73</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"vo2_max"</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"weight"</span><span class="p">:</span><span class="w"> </span><span class="mi">78</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="s2">"gender"</span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"height"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.82</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1460</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"preferences"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"resource_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/profile/1460/"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"unit_system"</span><span class="p">:</span><span class="w"> </span><span class="s2">"metric"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"weight"</span><span class="p">:</span><span class="w"> </span><span class="mi">78</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="s2">"resource_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/user/1511/"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"username"</span><span class="p">:</span><span class="w"> </span><span class="s2">"athlete@hexoskin.com"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre>
+
+<p>There are two ways of accessing user information. Using</p>
+
+<p><code class="prettyprint">curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/account/</code></p>
+
+<p>will always return you only the authenticated user&rsquo;s data. However, if you have friends or athletes, you can see their account information with</p>
+
+<p><code class="prettyprint">curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/user/</code></p>
+
+<p>The list you receive contains summaries of all users you can see&rsquo;s informations. This includes the authenticated account, and any friend or athlete that user has. In this summary view, the profile is returned as an URI. To access a specific user&rsquo;s profile, either ask for</p>
+
+<p><code class="prettyprint">curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/profile/[ID]</code></p>
+
+<p>or get the detail view of the user&rsquo;s data with</p>
+
+<p><code class="prettyprint">curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/user/[userID]</code></p>
+
+<p>Be sure to not mix up the user&rsquo;s ID with his profile&rsquo;s ID, as they will most likely differ.</p>
+<h2 id='getting-biometric-data---json'>Getting biometric data - JSON</h2>
+<blockquote>
+<p>https://api.hexoskin.com/api/v1/data/?datatype__in=19,33&amp;record=37700</p>
+</blockquote>
+<pre class="highlight json"><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"19"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="p">[</span><span class="w">
+                    </span><span class="mi">359840227126</span><span class="p">,</span><span class="w">
+                    </span><span class="mi">70</span><span class="w">
+                </span><span class="p">],</span><span class="w">
+                </span><span class="p">[</span><span class="w">
+                    </span><span class="mi">359840227382</span><span class="p">,</span><span class="w">
+                    </span><span class="mi">71</span><span class="w">
+                </span><span class="p">],</span><span class="w">
+                </span><span class="p">[</span><span class="s2">"..."</span><span class="p">]</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="s2">"33"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="p">[</span><span class="w">
+                    </span><span class="mi">359840227126</span><span class="p">,</span><span class="w">
+                    </span><span class="mi">12</span><span class="w">
+                </span><span class="p">],</span><span class="w">
+                </span><span class="p">[</span><span class="w">
+                    </span><span class="mi">359840227382</span><span class="p">,</span><span class="w">
+                    </span><span class="mi">13</span><span class="w">
+                </span><span class="p">],</span><span class="w">
+                </span><span class="p">[</span><span class="s2">"..."</span><span class="p">]</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="s2">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/user/1511/"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+
+</span></pre>
+
+<p>Because Hexoskin records lots of data, all hexoskin-recorded data is neatly organized in separate datatypes that you can query individually. You can view a list of all existing datatypes by using :</p>
+
+<p><code class="prettyprint">curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/datatype/</code></p>
+
+<p>Because it is returning a list view, the previous call returns a maximum of 20 objects. If you want to see a different subset, check out <a href="#list-views">List views</a> for more information.</p>
+
+<p>When you know which datatypes you need, you need to decide for which time frame you want them. To do so, you can pass a range or record. To get a list of records, for example, you can call :</p>
+
+<p><code class="prettyprint">curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/record/</code></p>
+
+<p>Now that you know what data you want, and for which record, you can query as follow, using the IDs of the resources you want :</p>
+
+<p><code class="prettyprint">curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/data/?datatype__in=19,33&amp;record=37700</code></p>
+
+<p>The previous query will return the datatype IDs 19 and 33 (heart rate and breathing rate) for record 37700.</p>
+
+<p>Note that all data is limited to return a maximum of 65535 points. If the time range you are asking for would contain more points (such as 257 seconds or more of 256Hz EKG, for example), the data returned is subsampled appropriately to return the max number of data points.</p>
+<h2 id='getting-biometric-data---binary'>Getting biometric data - Binary</h2>
+<blockquote>
+<p>The following Python script converts your binary files data and prints it.</p>
+</blockquote>
+<pre class="highlight python"><span class="c"># Decode WAV file</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span><span class="s">"h"</span><span class="p">)</span>  <span class="c">#Binary format : short</span>
+<span class="k">with</span> <span class="nb">file</span><span class="p">(</span><span class="s">'record_37700/ECG_I.wav'</span><span class="p">,</span> <span class="s">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">44</span><span class="p">)</span>  <span class="c"># Skip WAV headers</span>
+    <span class="nb">bytes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="k">while</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">print</span> <span class="n">data</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="nb">bytes</span><span class="p">)</span>
+        <span class="nb">bytes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+<span class="c">#Decode asynchronous file (.hxd)</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span><span class="s">"Qq"</span><span class="p">)</span> <span class="c"># Binary format : Unsigned long long, long long</span>
+<span class="k">with</span> <span class="nb">file</span><span class="p">(</span><span class="s">'record_37700/RR_interval.hxd'</span><span class="p">,</span> <span class="s">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="nb">bytes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="k">while</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">print</span> <span class="n">data</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="nb">bytes</span><span class="p">)</span>
+        <span class="nb">bytes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+</pre>
+
+<p>If you are interested in the full, unsubsampled raw data, you might want to consider getting it using the Accept: application/octet-stream header. This will return your data in compressed zip binary format. So for example, you wanted to download the raw ECG and RR interval for a given record, you would first call</p>
+
+<p><code class="prettyprint">curl -u athlete@hexoskin.com:hexoskin -H Accept:application/octet-stream https://api.hexoskin.com/api/v1/data/?datatype__in=4113,18\&amp;record=37700 &gt; record_37700.zip</code></p>
+
+<p>The previous call sets the Accept header to application/octet-stream to download the data in the binary format, then outputs the data to the record_37700 zip file. Datatype 4113 stands for ECG, and 18 for RR interval</p>
+
+<p>The next step is to unzip the compressed file. You can call</p>
+
+<p><code class="prettyprint">unzip record_37700.zip</code></p>
+
+<p>Which will create the record_37700 directory, containing ECG_I.wav and RR_interval.hxd, our binary files.</p>
+
+<p>As mentionned in the data resource documentation
+&ldquo;Syncronous data is returned as a RIFF/WAV file and asynconous data is returned as a series of timestamp/value pairs encoded as long longs (8 bytes).&rdquo;</p>
+
+<p>In this case, the ECG is synchronous, while the RR interval data is aynchronous.You can use the example on the right to guide you and find the equivalent for your favorite programming language.</p>
+<h2 id='getting-gps-data'>Getting GPS data</h2>
+<blockquote>
+<p>https://api.hexoskin.com/api/v1/track/</p>
+</blockquote>
+<pre class="highlight json"><span class="p">{</span><span class="w">
+    </span><span class="s2">"meta"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"limit"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"next"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/track/?limit=20&amp;offset=20"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"offset"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"previous"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"total_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"objects"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"area"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"distance"</span><span class="p">:</span><span class="w"> </span><span class="mf">656.763124754487</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">80</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"range"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/range/58979/"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"resource_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/track/80/"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"source"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/user/805/"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre>
+
+<blockquote>
+<p>https://api.hexoskin.com/api/v1/trackpoint/?track=80</p>
+</blockquote>
+<pre class="highlight json"><span class="p">{</span><span class="w">
+    </span><span class="s2">"meta"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"limit"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"next"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/trackpoint/?track=80&amp;limit=20&amp;offset=20"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"offset"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"previous"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"total_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">53</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"objects"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"altitude"</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"course"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"horizontal_accuracy"</span><span class="p">:</span><span class="w"> </span><span class="mf">3.90000009536743</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">27720</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"position"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="mf">-73.6045937</span><span class="p">,</span><span class="w">
+                </span><span class="mf">45.5308797</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="s2">"resource_uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/trackpoint/27720/"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"speed"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-08-29T09:25:15"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"track"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/track/80/"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"vertical_accuracy"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"altitude"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="s2">"resource_uri"</span><span class="p">:</span><span class="s2">"..."</span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre>
+
+<p>GPS data, collected by the mobile phone, is stored in the trackpoint endpoint. Whenever a range acquires GPS data, it creates a track object. You can list all available tracks using</p>
+
+<p><code class="prettyprint">curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/track/</code></p>
+
+<p>Tracks contain a reference to the range that is associated with it. Once you know which range, and thus which track you want, just query</p>
+
+<p><code class="prettyprint">curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/trackpoint/?track=80</code></p>
+<h2 id='getting-metrics'>Getting Metrics</h2>
+<blockquote>
+<p>https://api.hexoskin.com/api/v1/report/?include_metrics=1,45&amp;record=37700</p>
+</blockquote>
+<pre class="highlight json"><span class="p">{</span><span class="w">
+    </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"metric"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/metric/1/"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"activity_avg"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"outputtype"</span><span class="p">:</span><span class="w"> </span><span class="s2">"value"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"record"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/record/37700/"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"timerange"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="s2">"end"</span><span class="p">:</span><span class="w"> </span><span class="mi">359840821814</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"start"</span><span class="p">:</span><span class="w"> </span><span class="mi">359840226870</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/user/1511/"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Act Avg"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"unit"</span><span class="p">:</span><span class="w"> </span><span class="s2">"g"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/metric/1/"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"value"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.158528803165781</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"zone"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"zones"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                    </span><span class="mi">0</span><span class="p">,</span><span class="w">
+                    </span><span class="mf">0.1</span><span class="p">,</span><span class="w">
+                    </span><span class="mf">0.2</span><span class="p">,</span><span class="w">
+                    </span><span class="mf">0.3</span><span class="p">,</span><span class="w">
+                    </span><span class="mf">0.4</span><span class="p">,</span><span class="w">
+                    </span><span class="mf">0.5</span><span class="w">
+                </span><span class="p">]</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"data1"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="s2">"bin_edge"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                        </span><span class="mi">20</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">40</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">60</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">80</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">100</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">120</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">140</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">160</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">180</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">200</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">220</span><span class="w">
+                    </span><span class="p">],</span><span class="w">
+                    </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"unit"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bpm"</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                        </span><span class="mi">30</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">50</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">70</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">90</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">110</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">130</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">150</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">170</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">190</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">210</span><span class="w">
+                    </span><span class="p">]</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="s2">"data2"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"unit"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rep"</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                        </span><span class="mi">0</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">0</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">137</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">865</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">907</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">378</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">34</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">1</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">0</span><span class="p">,</span><span class="w">
+                        </span><span class="mi">0</span><span class="w">
+                    </span><span class="p">]</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="s2">"metric"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/metric/45/"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"heartrate_histo"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"outputtype"</span><span class="p">:</span><span class="w"> </span><span class="s2">"value"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"record"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/record/37700/"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"timerange"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="s2">"end"</span><span class="p">:</span><span class="w"> </span><span class="mi">359840821814</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"start"</span><span class="p">:</span><span class="w"> </span><span class="mi">359840226870</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/user/1511/"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"heartrate histo"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/metric/45/"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"outputtype"</span><span class="p">:</span><span class="w"> </span><span class="s2">"list"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"record"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="s2">"..."</span><span class="p">:</span><span class="s2">"..."</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"report"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/templatereport/None/"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></pre>
+
+<p>Along with the actual data from the hexoskin, metrics are also available. Metrics are a way to summarize data in a single values or histograms. A few example of metrics are heart rate average, max activity, minimum breathing rate and so on. A few noteworthy metrics are :</p>
+
+<ul>
+<li>Average, min, max:
+
+<ul>
+<li>Activity: 1, 3, 4</li>
+<li>Breathing rate: 12, 14, 15</li>
+<li>Cadence : 17,19, 20</li>
+<li>Heart rate: 44,46,47</li>
+<li>Minute ventilation: 55, 57, 58</li>
+</ul></li>
+<li>Heart rate histogram: 45</li>
+<li>Step count: 71</li>
+<li>Sleep total time, Sleep position changes, Sleep efficiency : 1032, 1038, 1039</li>
+<li>Total energy consumed (kCal): 126</li>
+</ul>
+
+<p>You access the full list of metrics using a similar pattern than for datatypes :</p>
+
+<p><code class="prettyprint">curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/metric/?limit=1000</code></p>
+
+<p>When you have your own list of favorite metrics, you can query the following (replacing &ldquo;1,45&rdquo; by your very own list)</p>
+
+<p><code class="prettyprint">curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/report/?include_metrics=1,45&amp;record=37700</code></p>
+
+<p>and the metric data will be appended to the record&rsquo;s information.</p>
+<h2 id='analyzing-hrv'>Analyzing HRV</h2>
+<blockquote>
+<p>https://api.hexoskin.com/api/v1/report/?include_metrics=50&amp;range=63624</p>
+</blockquote>
+<pre class="highlight json"><span class="p">{</span><span class="w">
+    </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"metric"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/metric/50/"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hrvlfnorm_avg"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"outputtype"</span><span class="p">:</span><span class="w"> </span><span class="s2">"value"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"record"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/record/63624/"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"timerange"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="s2">"end"</span><span class="p">:</span><span class="w"> </span><span class="mi">361674727680</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"start"</span><span class="p">:</span><span class="w"> </span><span class="mi">361674650880</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/user/36/"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"HRV LF norm"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"unit"</span><span class="p">:</span><span class="w"> </span><span class="s2">"%"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/metric/50/"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"value"</span><span class="p">:</span><span class="w"> </span><span class="mf">69.84</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"zone"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"zones"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                    </span><span class="mi">50</span><span class="p">,</span><span class="w">
+                    </span><span class="mi">60</span><span class="p">,</span><span class="w">
+                    </span><span class="mi">70</span><span class="p">,</span><span class="w">
+                    </span><span class="mi">80</span><span class="p">,</span><span class="w">
+                    </span><span class="mi">90</span><span class="p">,</span><span class="w">
+                    </span><span class="mi">100</span><span class="w">
+                </span><span class="p">]</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"outputtype"</span><span class="p">:</span><span class="w"> </span><span class="s2">"list"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"record"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="s2">"..."</span><span class="p">:</span><span class="s2">"..."</span><span class="p">},</span><span class="w">
+    </span><span class="s2">"report"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/templatereport/None/"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre>
+
+<p>First off, you have to know HRV is only computed for select ranges, in select conditions. This is because HRV is a very picky measure, requiring very high quality data, and a large RR intervals sample. As such, a range will have HRV metrics available only if :</p>
+
+<ul>
+<li>It contains more than 128 correctly detected heartbeats. Try not to take the smallest possible sample, go with volume, the quality of calculation increases as the sample size grows.</li>
+<li>The ECG data signal-to-noise ratio is high (little noise in the signal)</li>
+<li>The activitytype id of the trainingroutine assigned to the range is either 8, for Resting, or 12, for Sleep</li>
+</ul>
+
+<p>Once a range meets those criterias, the HRV will be calculated on the server and be available through metrics. Using the <a href="getting_metrics">Getting metrics</a> method above, try accessing metric id 50, which is the HRV average. A returned value of -1 means that the HRV has not been calculated correctly.</p>
+<h1 id='biometric-resources'>Biometric Resources</h1>
+<p>This section describes the various biometric resources. The full list of available datatypes is available through <code class="prettyprint">api/v1/datatypes/?limit=0</code>, but this section focuses on the actual biometric data acquired by the Hexoskin system.</p>
+
+<p>All datatypes are available either through the URLs described below, or alternatively through the <code class="prettyprint">/api/v1/data/?datatype__in=</code> endpoint.</p>
+<h2 id='ecg'>ECG</h2>
+<blockquote>
+<p>https://api.hexoskin.com/api/v1/data/?datatype=4113&amp;record=43419
+or
+https://api.hexoskin.com/api/v1/ecg/?record=43419</p>
+</blockquote>
+<pre class="highlight json"><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"4113"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="p">[</span><span class="w">
+                    </span><span class="mi">361446243405</span><span class="p">,</span><span class="w">
+                    </span><span class="mi">1715</span><span class="w">
+                </span><span class="p">],</span><span class="w">
+                </span><span class="p">[</span><span class="w">
+                    </span><span class="mi">361446243484</span><span class="p">,</span><span class="w">
+                    </span><span class="mi">1423</span><span class="w">
+                </span><span class="p">]</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="s2">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/v1/user/1511/"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></pre>
+
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/ecg/">https://api.hexoskin.com/docs/resource/ecg/</a></p>
+
+      </div>
+      <div class="dark-box">
+      </div>
+    </div>
+  </body>
+</html>
