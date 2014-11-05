@@ -52,7 +52,7 @@ This column will contain helpful example queries and responses, along with addit
 
 <p>The <strong>Hexoskin REST API</strong> allows you to interact and manipulate your Hexoskin data through HTTP requests. This includes accessing biometrics and user information (both yours and your friend&rsquo;s), but also annotating data, viewing advanced reports, fetching metrics, and more. Follow along as we explore the possibilities, or if you&rsquo;re up to it, jump straight to the resources you want to access.</p>
 <h2 id='before-getting-started'>Before getting started</h2><h3 id='other-ways-to-access-your-hexoskin-data'>Other ways to access your Hexoskin data</h3>
-<p>If you ended up here, you are probably interested in doing a bit more with your Hexoskin data. However, if you just want to download the data, there might be an easier way than using our REST API. You can download all your data in binary form directly from the <a href="https://my.hexoskin.com/">dashboard</a>. We provide scripts for Python and Matlab/Octave to help you covert them in .csv files, if you need. Have a look at <a href="http://support.hexoskin.com/customer/portal/articles/1491087-can-i-download-raw-data-from-the-dashboard-">this page</a> and see if it&rsquo;s sufficient for your needs.</p>
+<p>If you ended up here, you are probably interested in doing a bit more with your Hexoskin biometrics. However, if you just want to download your data, there might be an easier way than using our REST API. You can download all your data in binary form directly from the <a href="https://my.hexoskin.com/">dashboard</a>. We provide scripts for Python and Matlab/Octave to help you covert them in .csv files, if you need. Have a look at <a href="http://support.hexoskin.com/customer/portal/articles/1491087-can-i-download-raw-data-from-the-dashboard-">this page</a> and see if it&rsquo;s sufficient for your needs.</p>
 
 <p>Additionnally, there is a <a href="https://bitbucket.org/carre/hexoskin-api-python-client">Python client</a> available, available on Bitbucket. If you have implemented the API in another language and want to share it, be sure to write us an e-mail at <a href="mailto:api@hexoskin.com">api@hexoskin.com</a> and we&rsquo;ll put it up along with the Python client.</p>
 <h3 id='getting-an-api-key'>Getting an API key</h3>
@@ -72,7 +72,7 @@ One final thing to mention : While you can do some of the work from the web brow
 <h2 id='hexotimestamp'>HexoTimestamp</h2><pre class="highlight plaintext">For example, the 25th May of 2006 12:00:00pm is represented, in UNIX timestamps, as 1414690957. That times 256 is 362160884992, which is the 25th May 2006 12:00:00 in HexoTimestamp format.
 </pre>
 
-<p>Timestamps are represented a little differently than is usual. Instead of representing the number of seconds since Jan 1, 1970 UTC (UNIX timestamps), they represent the number of 256ths of a second since Jan 1, 1970 UTC. In other words, they are a regular timestamp multiplied by 256. All timestamps in the system are like this unless explicity noted otherwise. This modification allows the ECG&rsquo;s timestamps to be stored as integers, since it is the mosts frequent sample and it collects data at 256Hz.</p>
+<p>Timestamps are represented a little differently than is usual. Instead of representing the number of seconds since Jan 1, 1970 UTC (UNIX timestamps), they represent the number of 256ths of a second since Jan 1, 1970 12:00:00pm UTC. In other words, they are a regular timestamp multiplied by 256. All timestamps in the system are like this unless explicity noted otherwise. This modification allows the ECG&rsquo;s timestamps to be stored as integers, since it has the highest samplig rate, at 256Hz.</p>
 <h2 id='making-requests'>Making Requests</h2>
 <p>All requests are conducted over SSL. Any non-SSL requests received are forwarded to HTTPS. All requests must be signed with a valid API key. All requests must be authenticated via basic auth with the exception of createuserrequest.</p>
 <pre class="highlight plaintext">By default, all responses are returned as JSON. However, you can set your headers manually. The accepted headers for data format are:
@@ -150,7 +150,7 @@ X-HEXOSAPISIGNATURE: 3x4mPl3ShA15igN4tUr33x4mPl3ShA15igN4tUr3
 </span><span class="p">}</span><span class="w">
 </span></pre>
 
-<p>To get a list of resources, you make a GET request to the resource&rsquo;s endpoint. For instance, to retrieve all the datatypes you would make the following request:</p>
+<p>To get a list of resources, you make a GET request to the resource&rsquo;s endpoint. For instance, to retrieve datatypes you would make the following request:</p>
 
 <p><code class="prettyprint">curl -i https://api.hexoskin.com/api/v1/datatype/</code></p>
 
@@ -246,7 +246,7 @@ X-HEXOSAPISIGNATURE: 3x4mPl3ShA15igN4tUr33x4mPl3ShA15igN4tUr3
 
 <p>You may query a specific instance of a resource by accessing its URI. You are strongly encouraged to use the resource_uri attribute that is provided with each resource, however if you prefer to create them, they generally follow the pattern of the list URI with the ID appended:</p>
 
-<p><code class="prettyprint">/api/[API version]/[resource name]/[ID]</code></p>
+<p><code class="prettyprint">/api/[API version]/[resource name]/[ID]/</code></p>
 
 <p>So to access the Recorder start annotation datatype directly, you would make a GET request to:</p>
 
@@ -354,7 +354,7 @@ X-HEXOSAPISIGNATURE: 3x4mPl3ShA15igN4tUr33x4mPl3ShA15igN4tUr3
 
 <p><code class="prettyprint">curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/account/</code></p>
 
-<p>will always return you only the authenticated user&rsquo;s data. However, if you have friends or athletes, you can see their account information with</p>
+<p>will always return you only the authenticated user&rsquo;s data. However, if you have friends or athletes under your account, you can see their account information with</p>
 
 <p><code class="prettyprint">curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/user/</code></p>
 
@@ -420,6 +420,10 @@ X-HEXOSAPISIGNATURE: 3x4mPl3ShA15igN4tUr33x4mPl3ShA15igN4tUr3
 <p>The previous query will return the datatype IDs 19 and 33 (heart rate and breathing rate) for record 37700.</p>
 
 <p>Note that all data is limited to return a maximum of 65535 points. If the time range you are asking for would contain more points (such as 257 seconds or more of 256Hz EKG, for example), the data returned is subsampled appropriately to return the max number of data points.</p>
+
+<p><aside class="notice">
+This method is the easiest to implement (compared to the binary files approach) if you are trying to download asynchronous data.
+</aside></p>
 <h2 id='getting-biometric-data---binary'>Getting biometric data - Binary</h2>
 <blockquote>
 <p>The following Python script converts your binary files data and prints it.</p>
@@ -434,14 +438,30 @@ X-HEXOSAPISIGNATURE: 3x4mPl3ShA15igN4tUr33x4mPl3ShA15igN4tUr3
         <span class="k">print</span> <span class="n">data</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="nb">bytes</span><span class="p">)</span>
         <span class="nb">bytes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
 
+<span class="s">"""
+Output for synchronous data:
+    (1352,)
+    (1236,)
+    (1193,)
+    ...
+"""</span>
+
 <span class="c">#Decode asynchronous file (.hxd)</span>
 <span class="kn">import</span> <span class="nn">struct</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span><span class="s">"Qq"</span><span class="p">)</span> <span class="c"># Binary format : Unsigned long long, long long</span>
-<span class="k">with</span> <span class="nb">file</span><span class="p">(</span><span class="s">'record_37700/RR_interval.hxd'</span><span class="p">,</span> <span class="s">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">file</span><span class="p">(</span><span class="s">'record_37700/RR_interval.data'</span><span class="p">,</span> <span class="s">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="nb">bytes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
     <span class="k">while</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="k">print</span> <span class="n">data</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="nb">bytes</span><span class="p">)</span>
         <span class="nb">bytes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+<span class="s">"""
+Output for asynchronous data:
+    (85, 256)
+    (154, 69)
+    (234, 80)
+    ...
+"""</span>
 </pre>
 
 <p>If you are interested in the full, unsubsampled raw data, you might want to consider getting it using the Accept: application/octet-stream header. This will return your data in compressed zip binary format. So for example, you wanted to download the raw ECG and RR interval for a given record, you would first call</p>
@@ -456,10 +476,14 @@ X-HEXOSAPISIGNATURE: 3x4mPl3ShA15igN4tUr33x4mPl3ShA15igN4tUr3
 
 <p>Which will create the record_37700 directory, containing ECG_I.wav and RR_interval.hxd, our binary files.</p>
 
-<p>As mentionned in the data resource documentation
-&ldquo;Syncronous data is returned as a RIFF/WAV file and asynconous data is returned as a series of timestamp/value pairs encoded as long longs (8 bytes).&rdquo;</p>
-
 <p>In this case, the ECG is synchronous, while the RR interval data is aynchronous.You can use the example on the right to guide you and find the equivalent for your favorite programming language.</p>
+
+<p>As mentionned in the data resource documentation
+&ldquo;Syncronous data is returned as a RIFF/WAV file and asynconous data is returned as a series of timestamp/value pairs encoded as long longs (8 bytes).&rdquo; This means that synchronous data does not contain the timestamps. You can easily know when a sample has been acquired though, because you can access the record start and know the sampling rate. For the asynchronous data, the first column represents the offset from the record&rsquo;s start, in HexoTimestamp.</p>
+
+<p><aside class="notice">
+Although more complex, this method is much more efficient to implement to access raw data. That is because the JSON method will download everything in ascii (increasing file size compared to binary), and leave in the timestamps (effectively doubling or more the size of the file). Additionally, a maximum of 65535 data points are returned per query when accepting JSON responses. The additionnal paging necessary to access all the unsubsampled data would greatly reduce the download efficiency.
+</aside></p>
 <h2 id='getting-gps-data'>Getting GPS data</h2>
 <blockquote>
 <p>https://api.hexoskin.com/api/v1/track/</p>
@@ -708,15 +732,21 @@ X-HEXOSAPISIGNATURE: 3x4mPl3ShA15igN4tUr33x4mPl3ShA15igN4tUr3
 </ul>
 
 <p>Once a range meets those criterias, the HRV will be calculated on the server and be available through metrics. Using the <a href="getting_metrics">Getting metrics</a> method above, try accessing metric id 50, which is the HRV average. A returned value of -1 means that the HRV has not been calculated correctly.</p>
+<h1 id='resources'>Resources</h1>
+<p>The full list of available datatypes is available through <code class="prettyprint">api/v1/datatypes/?limit=0</code></p>
 <h1 id='biometric-resources'>Biometric Resources</h1>
-<p>This section describes the various biometric resources. The full list of available datatypes is available through <code class="prettyprint">api/v1/datatypes/?limit=0</code>, but this section focuses on the actual biometric data acquired by the Hexoskin system.</p>
+<p>This section describes the various biometric resources. All datatypes are available either through the URLs described below, or alternatively through the <code class="prettyprint">/api/v1/data/</code> endpoint. Using the <code class="prettyprint">?datatype__in=</code> filter will allow you to request more than one datatype easily.</p>
 
-<p>All datatypes are available either through the URLs described below, or alternatively through the <code class="prettyprint">/api/v1/data/?datatype__in=</code> endpoint.</p>
-<h2 id='ecg'>ECG</h2>
+<p>The following sections will link to the most up-to-date documentation for each resource. The broad category for each resource will briefly describe the relationship between the various resources under it.</p>
+<h2 id='heart-rate-related-resources'>Heart rate related resources</h2>
+<p>ECG is the key for all resources here. From the ECG, we detect the QRS complex (the peak that represents a heartbeat). The time interval between these QRS complexes is available through the RR interval resource. The RR interval is used to compute the Heart rate.</p>
+
+<p>The Heart rate status shows various flags related to signal quality to help you detect if the data is reliable or not.</p>
+<h3 id='ecg-raw-data'>ECG Raw Data</h3>
 <blockquote>
-<p>https://api.hexoskin.com/api/v1/data/?datatype=4113&amp;record=43419
-or
-https://api.hexoskin.com/api/v1/ecg/?record=43419</p>
+<p>https://api.hexoskin.com/api/v1/data/?datatype=4113&amp;record=43419</p>
+
+<p>https://api.hexoskin.com/api/v1/ecg/?record=43419</p>
 </blockquote>
 <pre class="highlight json"><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
@@ -738,6 +768,106 @@ https://api.hexoskin.com/api/v1/ecg/?record=43419</p>
 </span></pre>
 
 <p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/ecg/">https://api.hexoskin.com/docs/resource/ecg/</a></p>
+<h3 id='heart-rate'>Heart rate</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/heartrate/">https://api.hexoskin.com/docs/resource/heartrate/</a></p>
+<h3 id='heart-rate-status'>Heart Rate Status</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/heartratestatus/">https://api.hexoskin.com/docs/resource/heartratestatus/</a></p>
+<h3 id='qrs'>QRS</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/qrs/">https://api.hexoskin.com/docs/resource/qrs/</a></p>
+<h3 id='rr-interval'>RR interval</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/rrinterval/">https://api.hexoskin.com/docs/resource/rrinterval/</a></p>
+<h3 id='qrs-status'>QRS Status</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/qrsstatus/">https://api.hexoskin.com/docs/resource/qrsstatus/</a></p>
+<h2 id='respiration-related'>Respiration related</h2>
+<p>From the raw respiration sensor measurements, we automatically detect Expirations and Inspirations. From the time difference between inspirations, we compute the Breathing Rate while the difference in measurements between the Inspiration and Expirations yields the Tidal Volume. The average Tidal volume results in the Minute Ventilation.</p>
+<h3 id='respiration-raw-data'>Respiration Raw Data</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/respiration/">https://api.hexoskin.com/docs/resource/respiration/</a></p>
+<h3 id='breathing-rate'>Breathing rate</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/breathingrate/">https://api.hexoskin.com/docs/resource/breathingrate/</a></p>
+<h3 id='expiration'>Expiration</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/expiration/">https://api.hexoskin.com/docs/resource/expiration/</a></p>
+<h3 id='inspiration'>Inspiration</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/inspiration/">https://api.hexoskin.com/docs/resource/inspiration/</a></p>
+<h3 id='minute-ventilation'>Minute ventilation</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/minuteventilation/">https://api.hexoskin.com/docs/resource/minuteventilation/</a></p>
+<h3 id='tidal-volume'>Tidal volume</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/respiration/">https://api.hexoskin.com/docs/resource/respiration/</a></p>
+<h3 id='breathing-rate-status'>Breathing Rate Status</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/breathingratestatus/">https://api.hexoskin.com/docs/resource/breathingratestatus/</a></p>
+<h2 id='acceleration-related'>Acceleration related</h2>
+<p>To compute the Activity, we filter out the low-frequency gravity component of the raw accelerometer data, then average the modulus of the three axis.</p>
+
+<p>Using the raw measurements, we detect Steps automatically. The average time between steps yields the Cadence.</p>
+
+<p>Finally, Sleep Positions are calculated during sleep.</p>
+<h3 id='raw-accelerometer-data'>Raw Accelerometer data</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/acc/">https://api.hexoskin.com/docs/resource/acc/</a></p>
+<h3 id='activity'>Activity</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/activity/">https://api.hexoskin.com/docs/resource/activity/</a></p>
+<h3 id='step'>Step</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/step/">https://api.hexoskin.com/docs/resource/step/</a></p>
+<h3 id='cadence'>Cadence</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/cadence/">https://api.hexoskin.com/docs/resource/cadence/</a></p>
+<h3 id='sleep-position'>Sleep Position</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/sleepposition/">https://api.hexoskin.com/docs/resource/sleepposition/</a></p>
+<h1 id='gps-data-resources'>GPS Data Resources</h1>
+<p>GPS data is acquired and available when a Range requires geolocation.</p>
+<h3 id='track'>Track</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/track/">https://api.hexoskin.com/docs/resource/track/</a></p>
+<h3 id='track-point'>Track Point</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/trackpoint/">https://api.hexoskin.com/docs/resource/trackpoint/</a></p>
+<h1 id='structural-data-resources'>Structural Data Resources</h1><h3 id='range'>Range</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/range/">https://api.hexoskin.com/docs/resource/range/</a></p>
+<h3 id='record'>Record</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/record/">https://api.hexoskin.com/docs/resource/record/</a></p>
+<h1 id='additionnal-info-resources'>Additionnal Info Resources</h1><h3 id='annotation'>Annotation</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/annotation/">https://api.hexoskin.com/docs/resource/annotation/</a></p>
+<h3 id='activity-type'>Activity Type</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/activitytype/">https://api.hexoskin.com/docs/resource/activitytype/</a></p>
+<h3 id='activity-attribute'>Activity Attribute</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/activityattribute/">https://api.hexoskin.com/docs/resource/activityattribute/</a></p>
+<h3 id='activity-attribute-value'>Activity Attribute Value</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/activityattributevalue/">https://api.hexoskin.com/docs/resource/activityattributevalue/</a></p>
+<h3 id='async'>Async</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/async/">https://api.hexoskin.com/docs/resource/async/</a></p>
+<h3 id='metrics'>Metrics</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/metric/">https://api.hexoskin.com/docs/resource/metric/</a></p>
+<h3 id='training-routine'>Training Routine</h3>
+<p><strong>Doc:</strong> <a href="https://api.hexoskin.com/docs/resource/trainingroutine/">https://api.hexoskin.com/docs/resource/trainingroutine/</a></p>
+<h1 id='user-related-resources'>User Related Resources</h1>
+<p>In this section, User Resources are endpoints used to access some User-related information. Operations are endpoints that you can use to trigger server operations, such as a password reset for a user.</p>
+<h2 id='user-resources'>User resources</h2><h3 id='account'>Account</h3>
+<p><a href="https://api.hexoskin.com/docs/resource/account/">https://api.hexoskin.com/docs/resource/account/</a></p>
+<h3 id='bundle'>Bundle</h3>
+<p><a href="https://api.hexoskin.com/docs/resource/bundle/">https://api.hexoskin.com/docs/resource/bundle/</a></p>
+<h3 id='bundle-permission'>Bundle Permission</h3>
+<p><a href="https://api.hexoskin.com/docs/resource/bundle_permission/">https://api.hexoskin.com/docs/resource/bundle_permission/</a></p>
+<h3 id='profile'>Profile</h3>
+<p><a href="https://api.hexoskin.com/docs/resource/profile/">https://api.hexoskin.com/docs/resource/profile/</a></p>
+<h3 id='user'>User</h3>
+<p><a href="https://api.hexoskin.com/docs/resource/user/">https://api.hexoskin.com/docs/resource/user/</a></p>
+<h3 id='bundle-permission-request'>Bundle Permission Request</h3>
+<p><a href="https://api.hexoskin.com/docs/resource/bundle_permission_request/">https://api.hexoskin.com/docs/resource/bundle_permission_request/</a></p>
+<h2 id='operations'>Operations</h2><h3 id='change-email'>Change Email</h3>
+<p><a href="https://api.hexoskin.com/docs/resource/changeemail/">https://api.hexoskin.com/docs/resource/changeemail/</a></p>
+<h3 id='create-related-user'>Create Related User</h3>
+<p><a href="https://api.hexoskin.com/docs/resource/createrelateduser/">https://api.hexoskin.com/docs/resource/createrelateduser/</a></p>
+<h3 id='create-user'>Create User</h3>
+<p><a href="https://api.hexoskin.com/docs/resource/createuser/">https://api.hexoskin.com/docs/resource/createuser/</a></p>
+<h3 id='create-user-request'>Create User Request</h3>
+<p><a href="https://api.hexoskin.com/docs/resource/createuserrequest/">https://api.hexoskin.com/docs/resource/createuserrequest/</a></p>
+<h3 id='reset-password'>Reset password</h3>
+<p><a href="https://api.hexoskin.com/docs/resource/resetpassword/">https://api.hexoskin.com/docs/resource/resetpassword/</a></p>
+<h1 id='various-resources'>Various Resources</h1><h3 id='activity-log'>Activity Log</h3>
+<p><a href="https://api.hexoskin.com/docs/resource/activitylog/">https://api.hexoskin.com/docs/resource/activitylog/</a></p>
+<h3 id='device'>Device</h3>
+<p><a href="https://api.hexoskin.com/docs/resource/device/">https://api.hexoskin.com/docs/resource/device/</a></p>
+<h3 id='oauth-access-token'>OAuth Access Token</h3>
+<p><a href="https://api.hexoskin.com/docs/resource/oauthaccesstoken/">https://api.hexoskin.com/docs/resource/oauthaccesstoken/</a></p>
+<h3 id='oauth-client'>OAuth Client</h3>
+<p><a href="https://api.hexoskin.com/docs/resource/oauthclient/">https://api.hexoskin.com/docs/resource/oauthclient/</a></p>
+<h3 id='oauth-realm'>OAuth Realm</h3>
+<p><a href="https://api.hexoskin.com/docs/resource/oauthrealm/">https://api.hexoskin.com/docs/resource/oauthrealm/</a></p>
 
       </div>
       <div class="dark-box">
