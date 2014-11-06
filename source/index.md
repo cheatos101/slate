@@ -25,7 +25,7 @@ This column will contain helpful example queries and responses, along with addit
 
 This is the **Hexoskin REST API** reference Wiki.
 
-The **Hexoskin REST API** allows you to interact and manipulate your Hexoskin data through HTTP requests. This includes accessing biometrics and user information (both yours and your friend's), but also annotating data, viewing advanced reports, fetching metrics, and more. Follow along as we explore the possibilities, or if you're up to it, jump straight to the resources you want to access.
+The **Hexoskin REST API** allows you to interact and manipulate your Hexoskin data through HTTP requests. This includes accessing biometrics and user information (both yours and your friends'), but also annotating data, viewing advanced reports, fetching metrics, and more. Follow along as we explore the possibilities, or if you're up to it, jump straight to the resources you want to access.
 
 ## Before getting started
 
@@ -33,7 +33,7 @@ The **Hexoskin REST API** allows you to interact and manipulate your Hexoskin da
 
 If you ended up here, you are probably interested in doing a bit more with your Hexoskin biometrics. However, if you just want to download your data, there might be an easier way than using our REST API. You can download all your data in binary form directly from the [dashboard](https://my.hexoskin.com/). We provide scripts for Python and Matlab/Octave to help you covert them in .csv files, if you need. Have a look at [this page](http://support.hexoskin.com/customer/portal/articles/1491087-can-i-download-raw-data-from-the-dashboard-) and see if it's sufficient for your needs.
 
-Additionnally, there is a [Python client](https://bitbucket.org/carre/hexoskin-api-python-client) available, available on Bitbucket. If you have implemented the API in another language and want to share it, be sure to write us an e-mail at [api@hexoskin.com](mailto:api@hexoskin.com) and we'll put it up along with the Python client.
+Additionally, there is a [Python client](https://bitbucket.org/carre/hexoskin-api-python-client) available, available on Bitbucket. If you have implemented the API in another language and want to share it, be sure to write us an e-mail at [api@hexoskin.com](mailto:api@hexoskin.com) and we'll put it up along with the Python client.
 
 ### Getting an API key
 
@@ -41,13 +41,14 @@ To use this REST API, you'll need an API key. If you don't have one already, ema
 
 ### So... What's a REST API?
 
-If you are new to using APIs, you're at the right place. You'll need to understand the concept of REST API before you can do anything. Reading this will help, but you will probably have a little homework to do if you're starting from scratch. If you already know what we are talking about, great! Jump ahead to the Hexoskin REST API Overview section to get started.
+If you're new to using APIs, you're at the right place. You'll need to understand the concept of REST API before you can do anything. Reading this will help, but you will probably have a little homework to do if you're starting from scratch. If you already know what we are talking about, great! Jump ahead to the Hexoskin REST API Overview section to get started.
 
-For those still here, a REST API is of a way to structure data so you can access it. A website like [`http://hexoskin.com`](http://hexoskin.com) is something you're most likely already comfortable with. It's a page that contains some information. To go to the developer section of the website, you can obviously click on a few button, but you can also add [`/pages/developers`](http://hexoskin.com/pages/developers) to the previous URL, and you'll end up in the developer section. You just went from the general website to the developer-oriented page.
-A REST API works in a very similar fashion. The entry point of the REST API is [`https://api.hexoskin.com/api/v1/`](https://api.hexoskin.com/api/v1/) , and appending information at the end will bring you further down. For example, asking for [`https://api.hexoskin.com/api/v1/account/`](https://api.hexoskin.com/api/v1/account/) will return you your own account's information. Try it in your web browser! It'll ask you to identify yourself, because our API needs authentication. Just use your Hexoskin account as credentials. The information is returned as a JSON object, a standard format for such kind of information.
+For those still here, REST stands for [REpresentational State Transfer](http://en.wikipedia.org/wiki/Representational_state_transfer) and describes a way to make data accessible, generally via the Internet. A website like [http://hexoskin.com](http://hexoskin.com) is something you're most likely already comfortable with. It's a page that contains some information. To go to the developer section of the website, you can obviously click on a few button, but you can also add [/pages/developers](http://hexoskin.com/pages/developers) to the previous URL, and you'll end up in the developer section. You just went from the general website to the developer-oriented page.
+A REST API works in a very similar fashion. The entry point of the REST API is `https://api.hexoskin.com/api/v1/`, and appending information at the end will bring you further down. For example, asking for `https://api.hexoskin.com/api/v1/account/` will return you your own account's information. The information is returned as a JSON object, a standard format for such kind of information.
 
-Something quite neat about REST APIs is that you can add arguments that will modify what the REST API returns to you. For example, take [`https://api.hexoskin.com/api/v1/trainingroutine/`](https://api.hexoskin.com/api/v1/trainingroutine/). The response you receive will contain all training routines available to perform. But what if you want to look at the training routines that you have used? Well, looking at the trainingroutine documentation ([`https://api.hexoskin.com/docs/resource/trainingroutine/`](https://api.hexoskin.com/docs/resource/trainingroutine/)), you see that there is a filter just for that. You can then query [`https://api.hexoskin.com/api/v1/trainingroutine/?using=True`](https://api.hexoskin.com/api/v1/trainingroutine/?using=True), and voilà, you have used a filter to modify what the REST API returns to you.
-One final thing to mention : While you can do some of the work from the web browser, there is a much bigger universe that you can access using some programming utility. Your web browser will allow you to GET information from the REST API, but using a programming language will allow you to POST information, and even PATCH some resources that you want modified. The Hexoskin REST API Overview documentation will use the cURL tool ([http://curl.haxx.se/](http://curl.haxx.se/)) to demonstrate the REST API functionality, but you can pretty much always find an equivalent in your favorite programming language.
+Something quite neat about REST APIs is that you can add arguments that will modify what the REST API returns to you. For example, take `https://api.hexoskin.com/api/v1/trainingroutine/`. The response you receive will contain all training routines available to perform. But what if you want to look at the training routines that you have used? Well, looking at the trainingroutine documentation (`https://api.hexoskin.com/docs/resource/trainingroutine/`), you see that there is a filter just for that. You can then query `https://api.hexoskin.com/api/v1/trainingroutine/?using=True`, and voilà, you have used a filter to modify what the REST API returns to you.
+
+One final thing to mention : While your web browser will allow you to fetch information from regular websites, our REST API requires additionnal information that the browser doesn't provide. To interact with the REST API, you need to be using some programming language that allows you to specify some headers to the HTTP request you are making. That will allow you to GET, POST information, DELETE and PATCH some resources that you want modified. This documentation provides example HTTP requests, without regard to the actual implementation in a specific programming language.
 
 # Getting started
 
@@ -67,7 +68,7 @@ Timestamps are represented a little differently than is usual. Instead of repres
 
 ## Making Requests
 
-All requests are conducted over SSL. Any non-SSL requests received are forwarded to HTTPS. All requests must be signed with a valid API key. All requests must be authenticated via basic auth with the exception of createuserrequest.
+All requests are conducted over SSL. Any non-SSL requests received are forwarded to HTTPS. All requests must be signed with a valid API key. All requests must be authenticated via Basic Auth or OAuth with the exception of createuserrequest.
 
 ```
 By default, all responses are returned as JSON. However, you can set your headers manually. The accepted headers for data format are:
@@ -77,9 +78,9 @@ By default, all responses are returned as JSON. However, you can set your header
     Accept: text/csv
 ```
 
-Currently, only JSON is supported for non-data resources. For data resources, JSON, CSV and octet-stream are supported, though JSON have limitations (see [data](data)). Set your headers accordingly.
+Currently, only JSON is supported for non-data resources. For data resources, JSON, CSV and octet-stream are supported, though JSON have limitations (see [data](#data)). Set your headers accordingly.
 
-On the whole, interactions with the API behave as described in Tastypie's documentation. A couple of notable restrictions are:
+On the whole, interactions with the API behave as described in [Tastypie's documentation](https://django-tastypie.readthedocs.org/en/v0.9.16/interacting.html). A couple of notable restrictions are:
 
 DELETE and PUT requests to list views are always denied.
 PUT to a detail view of a non-existant instance will not attempt to create the instance, it will result in a 404.
@@ -147,9 +148,9 @@ The signature is a SHA1 hash of the the private key, timestamp, and the URL (the
     ]
 }
 ```
-To get a list of resources, you make a GET request to the resource's endpoint. For instance, to retrieve datatypes you would make the following request:
+To get a list of resources, you make a GET request to the resource's endpoint. For instance, to retrieve datatypes you would access the following resource:
 
-`curl -i https://api.hexoskin.com/api/v1/datatype/`
+`https://api.hexoskin.com/api/v1/datatype/`
 
 Resources are represented as URIs. URIs generally conform to the following model:
 
@@ -313,19 +314,19 @@ You have attempted to use a method which is not allowed on the given resource.
 The API has encountered an error.
 
 
-# Hexoskin REST API Cookbook
+# Common Operations Examples
 
-This section contains example recipes to display some functionalities of the REST API. However, before jumping in, there will be a quick overview of the Hexoskin ecosystem (the resources and their interactions). Read away if this is interesting to you, or jump straight to the cookbook's recipes if you want some examples.
+This section contains example recipes, displaying some functionalities of the REST API. However, before jumping in, there will be a quick overview of the Hexoskin ecosystem (the resources and their interactions). Read away if this is interesting to you, or jump straight to the examples.
 
 ## Hexoskin ecosystem overview
 
 At this point, you might have some data collected or are looking at the demo account, and are wondering: What are the different building blocks of this API and how do they interact together? Is there anything important that I should know before getting into this? Before getting in the detailed filters and query descriptions, this section will give you a quick overview of the Hexoskin ecosystem.
 
-For starters, to find all hexoskin-collected data you have to specify a timestamp range and a user. When a user connects his hexoskin to the shirt, a Record is created. A Record consists, among others, of a user, and a start and end timestamp. Because of that, when asking for data, you can either query directly by timestamp, or instead ask for a record's data directly. Since records are always created over Hexoskin-collected data, you should never find any data outside of a record. Since it comes from the mobile phone directly, all GPS data is instead aggregated in the Ranges. Speaking of which, Ranges, often referred to as activities, are a way for you to annotate what you were doing at a given time. Ranges have, among other attributes, a name, a start and end time, and an user. When using the mobile application, setting the activity will start the GPS data collection if applicable, and that data will be available for that Range.
+For starters, to find all hexoskin-collected data you have to specify a timestamp range and a user. When a user connects his hexoskin to the shirt, a `Record` is created. A `Record` consists, among others, of a user, and a start and end timestamp. Because of that, when asking for data, you can either query directly by timestamp, or instead ask for a record's data directly. Since records are always created over Hexoskin-collected data, you should never find any data outside of a record. Since it comes from the mobile phone directly, all GPS data is instead aggregated in the `Ranges`. Speaking of which, `Ranges`, often referred to as activities, are a way for you to annotate what you were doing at a given time. `Ranges` have, among other attributes, a name, a start and end time, and an user. When using the mobile application, setting the activity will start the GPS data collection if applicable, and that data will be available for that `Range`.
 
-All Hexoskin-collected data is separated in datatypes. Each datatype has it's own id, and when accessing data, you pass a list of datatype ids in the request.
+All Hexoskin-collected data is separated in `datatype`s. Each `datatype` has it's own id, and when accessing `data`, you pass a list of `datatype` ids in the request.
 
-Some Ranges will trigger additional processing, making more data available to you. Depending on the Activity type of the Training routine of the range applied, HRV, sleep positions, and more become available. Refer to the Activity type documentation to see what makes which data available.
+Some `Ranges` will trigger additional processing, making more data available to you. Depending on the `activitytype` of the `trainingroutine` of the range applied, HRV, sleep positions, and more become available. Refer to the `activitytype` documentation to see what makes which `data` available. The relationship between `range`s, `trainingroutine`s and `activitytype`s is very simple : An activitytype is a broad category that regroups multiple `trainingroutine` together and that tells us if some special processing must be done. For example, Resting is an example of `activitytype` and tells us to process HRV. `trainingroutine` are just a specific type of activity. The `trainingroutine` indicates if the GPS should be started when using the application via the 'geo' field, but otherwise, it's just a slightly more specific categorization of the `range`. `range`s are the instance of a trainingroutine. When performing an activity and annotating it on the phone, a `range` is created, allowing the user to easily find back "that time" he did "that thing".
 
 In the API, there is a coach-athlete and friend relationship. They differ by the kind of permissions they provide to the affected users. As someone's friend or as his coach, his data will appear in the responses, unless you filter them out. Athletes do not see the coach's data.
 
@@ -378,19 +379,19 @@ In the API, there is a coach-athlete and friend relationship. They differ by the
 
 There are two ways of accessing user information. Using
 
-`curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/account/`
+`https://api.hexoskin.com/api/v1/account/`
 
 will always return you only the authenticated user's data. However, if you have friends or athletes under your account, you can see their account information with
 
-`curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/user/`
+`https://api.hexoskin.com/api/v1/user/`
 
 The list you receive contains summaries of all users you can see's informations. This includes the authenticated account, and any friend or athlete that user has. In this summary view, the profile is returned as an URI. To access a specific user's profile, either ask for
 
-`curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/profile/[ID]`
+`https://api.hexoskin.com/api/v1/profile/[ID]`
 
 or get the detail view of the user's data with
 
-`curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/user/[userID]`
+`https://api.hexoskin.com/api/v1/user/[userID]`
 
 Be sure to not mix up the user's ID with his profile's ID, as they will most likely differ.
 
@@ -434,17 +435,17 @@ Be sure to not mix up the user's ID with his profile's ID, as they will most lik
 
 Because Hexoskin records lots of data, all hexoskin-recorded data is neatly organized in separate datatypes that you can query individually. You can view a list of all existing datatypes by using :
 
-`curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/datatype/`
+`https://api.hexoskin.com/api/v1/datatype/`
 
 Because it is returning a list view, the previous call returns a maximum of 20 objects. If you want to see a different subset, check out [List views](#list-views) for more information.
 
 When you know which datatypes you need, you need to decide for which time frame you want them. To do so, you can pass a range or record. To get a list of records, for example, you can call :
 
-`curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/record/`
+`https://api.hexoskin.com/api/v1/record/`
 
 Now that you know what data you want, and for which record, you can query as follow, using the IDs of the resources you want :
 
-`curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/data/?datatype__in=19,33&record=37700`
+`https://api.hexoskin.com/api/v1/data/?datatype__in=19,33&record=37700`
 
 The previous query will return the datatype IDs 19 and 33 (heart rate and breathing rate) for record 37700.
 
@@ -480,7 +481,7 @@ Output for synchronous data:
 #Decode asynchronous file (.hxd)
 import struct
 data = struct.Struct("Qq") # Binary format : Unsigned long long, long long
-with file('record_37700/RR_interval.data', 'r') as f:
+with file('record_37700/RR_interval.hxd', 'r') as f:
     bytes = f.read(data.size)
     while bytes:
         print data.unpack(bytes)
@@ -498,7 +499,9 @@ Output for asynchronous data:
 
 If you are interested in the full, unsubsampled raw data, you might want to consider getting it using the Accept: application/octet-stream header. This will return your data in compressed zip binary format. So for example, you wanted to download the raw ECG and RR interval for a given record, you would first call
 
-`curl -u athlete@hexoskin.com:hexoskin -H Accept:application/octet-stream https://api.hexoskin.com/api/v1/data/?datatype__in=4113,18\&record=37700 > record_37700.zip`
+`https://api.hexoskin.com/api/v1/data/?datatype__in=4113,18&record=37700`
+
+with the header `Accept:application/octet-stream`, which will write the output to a Zip file.
 
 The previous call sets the Accept header to application/octet-stream to download the data in the binary format, then outputs the data to the record_37700 zip file. Datatype 4113 stands for ECG, and 18 for RR interval
 
@@ -506,15 +509,16 @@ The next step is to unzip the compressed file. You can call
 
 `unzip record_37700.zip`
 
-Which will create the record_37700 directory, containing ECG_I.wav and RR_interval.hxd, our binary files.
+which will create the record_37700 directory, containing ECG_I.wav and RR_interval.hxd, our binary files.
 
-In this case, the ECG is synchronous, while the RR interval data is aynchronous.You can use the example on the right to guide you and find the equivalent for your favorite programming language.
+In this case, the ECG is synchronous, while the RR interval data is asynchronous.You can use the example on the right to guide you and find the equivalent to decode both files in your favorite programming language.
 
-As mentionned in the data resource documentation
+As mentionned in the data resource documentation:
+s
 "Syncronous data is returned as a RIFF/WAV file and asynconous data is returned as a series of timestamp/value pairs encoded as long longs (8 bytes)." This means that synchronous data does not contain the timestamps. You can easily know when a sample has been acquired though, because you can access the record start and know the sampling rate. For the asynchronous data, the first column represents the offset from the record's start, in HexoTimestamp.
 
 <aside class="notice">
-Although more complex, this method is much more efficient to implement to access raw data. That is because the JSON method will download everything in ascii (increasing file size compared to binary), and leave in the timestamps (effectively doubling or more the size of the file). Additionally, a maximum of 65535 data points are returned per query when accepting JSON responses. The additionnal paging necessary to access all the unsubsampled data would greatly reduce the download efficiency.
+Although more complex, this method is much more efficient to implement for accessing raw data. That is because the JSON method will download everything in ASCII (increasing file size compared to binary), and leave in the timestamps (effectively doubling or more the size of the file). Additionally, a maximum of 65535 data points are returned per query when accepting JSON responses. The additional paging necessary to access all the unsubsampled data would greatly reduce the download efficiency.
 </aside>
 
 ## Getting GPS data
@@ -582,11 +586,11 @@ Although more complex, this method is much more efficient to implement to access
 
 GPS data, collected by the mobile phone, is stored in the trackpoint endpoint. Whenever a range acquires GPS data, it creates a track object. You can list all available tracks using
 
-`curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/track/`
+`https://api.hexoskin.com/api/v1/track/`
 
 Tracks contain a reference to the range that is associated with it. Once you know which range, and thus which track you want, just query
 
-`curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/trackpoint/?track=80`
+`https://api.hexoskin.com/api/v1/trackpoint/?track=80`
 
 
 ## Getting Metrics
@@ -688,8 +692,8 @@ Tracks contain a reference to the range that is associated with it. Once you kno
     "report": "/api/v1/templatereport/None/",
     "title": ""
 }
-
 ```
+
 Along with the actual data from the hexoskin, metrics are also available. Metrics are a way to summarize data in a single values or histograms. A few example of metrics are heart rate average, max activity, minimum breathing rate and so on. A few noteworthy metrics are :
 
 * Average, min, max:
@@ -705,11 +709,11 @@ Along with the actual data from the hexoskin, metrics are also available. Metric
 
 You access the full list of metrics using a similar pattern than for datatypes :
 
-`curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/metric/?limit=1000`
+`https://api.hexoskin.com/api/v1/metric/?limit=1000`
 
 When you have your own list of favorite metrics, you can query the following (replacing "1,45" by your very own list)
 
-`curl -u athlete@hexoskin.com:hexoskin https://api.hexoskin.com/api/v1/report/?include_metrics=1,45&record=37700`
+`https://api.hexoskin.com/api/v1/report/?include_metrics=1,45&record=37700`
 
 and the metric data will be appended to the record's information.
 
@@ -772,19 +776,46 @@ The full list of available datatypes is available through `api/v1/datatypes/?lim
 
 # Biometric Resources
 
-This section describes the various biometric resources. All datatypes are available either through the URLs described below, or alternatively through the `/api/v1/data/` endpoint. Using the `?datatype__in=` filter will allow you to request more than one datatype easily.
+>https://api.hexoskin.com/api/v1/data/?datatype=4113&record=43419
+
+```json
+[
+    {
+        "data": {
+            "4113": [
+                [
+                    361446243405,
+                    1715
+                ],
+                [
+                    361446243484,
+                    1423
+                ]
+            ]
+        },
+        "user": "/api/v1/user/1511/"
+    }
+]
+```
+
+This section describes the various biometric resources. All datatypes are available either through the URLs described in each respective section, or alternatively through the `/api/v1/data/` endpoint described just below. Using the `?datatype__in=` filter will allow you to request more than one datatype easily.
 
 The following sections will link to the most up-to-date documentation for each resource. The broad category for each resource will briefly describe the relationship between the various resources under it.
 
-## Heart rate related resources
+### Data
+
+
+**Doc:** [https://api.hexoskin.com/docs/resource/data/](https://api.hexoskin.com/docs/resource/data/)
+
+The data endpoint is the easiest way to access biometric data, as it allows you to make a single query to fetch multiple different datatypes, provided you know the datatype's IDs.
+
+## Heart rate related
 
 ECG is the key for all resources here. From the ECG, we detect the QRS complex (the peak that represents a heartbeat). The time interval between these QRS complexes is available through the RR interval resource. The RR interval is used to compute the Heart rate.
 
 The Heart rate status shows various flags related to signal quality to help you detect if the data is reliable or not.
 
 ###  ECG Raw Data
-
->https://api.hexoskin.com/api/v1/data/?datatype=4113&record=43419
 
 > https://api.hexoskin.com/api/v1/ecg/?record=43419
 
@@ -835,6 +866,33 @@ The Heart rate status shows various flags related to signal quality to help you 
 
 From the raw respiration sensor measurements, we automatically detect Expirations and Inspirations. From the time difference between inspirations, we compute the Breathing Rate while the difference in measurements between the Inspiration and Expirations yields the Tidal Volume. The average Tidal volume results in the Minute Ventilation.
 
+> https://api.hexoskin.com/api/v1/tidalvolume/?record=37700
+
+```json
+[
+    {
+        "data": {
+            "37": [
+                [
+                    359840228406,
+                    571.04
+                ],
+                [
+                    359840228662,
+                    571.04
+                ],
+                [
+                    359840228918,
+                    571.04
+                ]
+            ]
+        },
+        "user": "/api/v1/user/1511/"
+    }
+]
+```
+
+
 ### Respiration Raw Data
 
 **Doc:** [https://api.hexoskin.com/docs/resource/respiration/](https://api.hexoskin.com/docs/resource/respiration/)
@@ -874,6 +932,32 @@ Finally, Sleep Positions are calculated during sleep.
 
 ### Raw Accelerometer data
 
+> https://api.hexoskin.com/api/v1/sleepposition/?range=XXXXX
+
+```json
+[
+    {
+        "data": {
+            "270": [
+                [
+                    362306334580,
+                    1
+                ],
+                [
+                    362306335092,
+                    5
+                ],
+                [
+                    362306336628,
+                    1
+                ]
+            ]
+        },
+        "user": "/api/v1/user/XXXXX/"
+    }
+]
+```
+
 **Doc:** [https://api.hexoskin.com/docs/resource/acc/](https://api.hexoskin.com/docs/resource/acc/)
 
 ### Activity
@@ -893,20 +977,164 @@ Finally, Sleep Positions are calculated during sleep.
 **Doc:** [https://api.hexoskin.com/docs/resource/sleepposition/](https://api.hexoskin.com/docs/resource/sleepposition/)
 
 
+## HRV
+
+Although HRV is calculated by ECG, it deserves its own section. While HRV is in itself an accessible datatype, there is a lot of related information, as described below.
+
+**Doc:** [https://api.hexoskin.com/docs/resource/hrv/](https://api.hexoskin.com/docs/resource/hrv/)
+
+### Ann
+
+**Doc:** [https://api.hexoskin.com/docs/resource/ann/](https://api.hexoskin.com/docs/resource/ann/)
+
+### HRV HF
+
+**Doc:** [https://api.hexoskin.com/docs/resource/hrvhf/](https://api.hexoskin.com/docs/resource/hrvhf/)
+
+### HRV LF
+
+**Doc:** [https://api.hexoskin.com/docs/resource/hrvlf/](https://api.hexoskin.com/docs/resource/hrvlf/)
+
+### HRV LF NORM
+
+**Doc:** [https://api.hexoskin.com/docs/resource/hrvlfnorm/](https://api.hexoskin.com/docs/resource/hrvlfnorm/)
+
+### HRV LF Ratio
+
+**Doc:** [https://api.hexoskin.com/docs/resource/hrvlfratio/](https://api.hexoskin.com/docs/resource/hrvlfratio/)
+
+### NN Interval
+
+**Doc:** [https://api.hexoskin.com/docs/resource/nninterval/](https://api.hexoskin.com/docs/resource/nninterval/)
+
+### NN Over RR
+
+**Doc:** [https://api.hexoskin.com/docs/resource/nnoverrr/](https://api.hexoskin.com/docs/resource/nnoverrr/)
+
+### SD NN
+
+**Doc:** [https://api.hexoskin.com/docs/resource/sdnn/](https://api.hexoskin.com/docs/resource/sdnn/)
+
+### SD Ann
+
+**Doc:** [https://api.hexoskin.com/docs/resource/sdann/](https://api.hexoskin.com/docs/resource/sdann/)
+
+### Triangular
+
+**Doc:** [https://api.hexoskin.com/docs/resource/triangular/](https://api.hexoskin.com/docs/resource/triangular/)
+
+
 # GPS Data Resources
 
 GPS data is acquired and available when a Range requires geolocation.
 
 ### Track
 
+> https://api.hexoskin.com/api/v1/track/?range=48328
+
+```json
+{
+    "meta": {
+        "limit": 20,
+        "next": null,
+        "offset": 0,
+        "previous": null,
+        "total_count": 1
+    },
+    "objects": [
+        {
+            "area": null,
+            "distance": 13.9953509448312,
+            "id": 1,
+            "name": "",
+            "range": "/api/v1/range/48328/",
+            "resource_uri": "/api/v1/track/1/",
+            "source": "",
+            "user": "/api/v1/user/805/"
+        }
+    ]
+}
+```
+
+The track object is the container for the list of GPS points that were acquired during the range execution. Because GPS is only on when executing certain training routine, make sure that the routine you want to collect the data from has the "geo" parameter set to true.
+
 **Doc:** [https://api.hexoskin.com/docs/resource/track/](https://api.hexoskin.com/docs/resource/track/)
 
 ### Track Point
+
+> https://api.hexoskin.com/api/v1/trackpoint/?track=1
+
+```json
+{
+    "meta": {
+        "distance": {
+            "/api/v1/track/1/": 13.9953509448312
+        },
+        "limit": 20,
+        "next": null,
+        "offset": 0,
+        "previous": null,
+        "total_count": 2,
+        "total_tracks": 1
+    },
+    "objects": [
+        {
+            "altitude": 38,
+            "course": null,
+            "horizontal_accuracy": 4,
+            "id": 2,
+            "position": [
+                -73.598363,
+                45.5299156
+            ],
+            "resource_uri": "/api/v1/trackpoint/2/",
+            "speed": 5.9548716545105,
+            "time": "2014-08-14T05:25:17",
+            "track": "/api/v1/track/1/",
+            "vertical_accuracy": null
+        }
+    ]
+}
+```
+
+Trackpoints are the actual GPS locations measured by the phone during the range.
 
 **Doc:** [https://api.hexoskin.com/docs/resource/trackpoint/](https://api.hexoskin.com/docs/resource/trackpoint/)
 
 
 # Structural Data Resources
+
+> https://api.hexoskin.com/api/v1/record/37700/
+
+```json
+{
+    "data": "Nh4myFMAAABIWERFVi1BVVRPNp4AAAAAJAAAAEZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGAQAFAA==",
+    "data_status": {},
+    "dev_id": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+    "device": "/api/v1/device/HXSKIN1200002070/",
+    "end": 359840821814,
+    "firmware_rev": "1.0.5",
+    "id": 37700,
+    "last_modified": "2014-07-17T20:16:50+00:00",
+    "n_uploaded_timelines": 0,
+    "npages": 8276,
+    "resource_uri": "/api/v1/record/37700/",
+    "soft_protocole": 0,
+    "soft_uid": "HXDEV-AUTO",
+    "start": 359840226870,
+    "start_date": "2014-07-17T19:38:06+00:00",
+    "status": "complete",
+    "user": {
+        "email": "athlete@hexoskin.com",
+        "first_name": "Athlete",
+        "id": 1511,
+        "last_name": "Hexoskin",
+        "profile": "/api/v1/profile/1460/",
+        "resource_uri": "/api/v1/user/1511/",
+        "username": "athlete@hexoskin.com"
+    }
+}
+```
 
 ### Range
 
@@ -917,7 +1145,7 @@ GPS data is acquired and available when a Range requires geolocation.
 **Doc:** [https://api.hexoskin.com/docs/resource/record/](https://api.hexoskin.com/docs/resource/record/)
 
 
-# Additionnal Info Resources
+# Additional Info Resources
 
 ### Annotation
 
@@ -945,7 +1173,34 @@ GPS data is acquired and available when a Range requires geolocation.
 
 ### Training Routine
 
+> https://api.hexoskin.com/api/v1/trainingroutine/1/
+
+```json
+{
+    "activitytype": "/api/v1/activitytype/1/",
+    "application_metadata": null,
+    "description": "Bicycle or cardio cycling machine",
+    "id": 1,
+    "last_used": null,
+    "metadata": {
+        "geo": true
+    },
+    "name": "bike",
+    "resource_uri": "/api/v1/trainingroutine/1/",
+    "trainingroutines": [],
+    "user": null
+}
+```
+
 **Doc:** [https://api.hexoskin.com/docs/resource/trainingroutine/](https://api.hexoskin.com/docs/resource/trainingroutine/)
+
+### Unit
+
+**Doc:** [https://api.hexoskin.com/docs/resource/unit/](https://api.hexoskin.com/docs/resource/unit/)
+
+### Zone
+
+**Doc:** [https://api.hexoskin.com/docs/resource/zone/](https://api.hexoskin.com/docs/resource/zone/)
 
 
 # User Related Resources
@@ -1001,8 +1256,42 @@ In this section, User Resources are endpoints used to access some User-related i
 [https://api.hexoskin.com/docs/resource/resetpassword/](https://api.hexoskin.com/docs/resource/resetpassword/)
 
 
+# Astroskin-specific resources
 
-# Various Resources
+### Pulse Oximetry Heart Rate
+
+**Doc:** [https://api.hexoskin.com/docs/resource/pohr/](https://api.hexoskin.com/docs/resource/pohr/)
+
+### PPG
+
+**Doc:** [https://api.hexoskin.com/docs/resource/ppg/](https://api.hexoskin.com/docs/resource/ppg/)
+
+### PTT
+
+**Doc:** [https://api.hexoskin.com/docs/resource/ptt/](https://api.hexoskin.com/docs/resource/ptt/)
+
+### SPO2
+
+**Doc:** [https://api.hexoskin.com/docs/resource/spo2/](https://api.hexoskin.com/docs/resource/spo2/)
+
+### SPO2 status
+
+**Doc:** [https://api.hexoskin.com/docs/resource/spo2status/](https://api.hexoskin.com/docs/resource/spo2status/)
+
+### Systolic pressure
+
+**Doc:** [https://api.hexoskin.com/docs/resource/systolicpressure/](https://api.hexoskin.com/docs/resource/systolicpressure/)
+
+### Temperature
+
+**Doc:** [https://api.hexoskin.com/docs/resource/temperature/](https://api.hexoskin.com/docs/resource/temperature/)
+
+### Temperature status
+
+**Doc:** [https://api.hexoskin.com/docs/resource/temperaturestatus/](https://api.hexoskin.com/docs/resource/temperaturestatus/)
+
+
+# Miscellaneous Resources
 
 ### Activity Log
 
@@ -1023,3 +1312,47 @@ In this section, User Resources are endpoints used to access some User-related i
 ### OAuth Realm
 
 [https://api.hexoskin.com/docs/resource/oauthrealm/](https://api.hexoskin.com/docs/resource/oauthrealm/)
+
+### Content Type
+
+**Doc:** [https://api.hexoskin.com/docs/resource/contenttype/](https://api.hexoskin.com/docs/resource/contenttype/)
+
+### Datafile
+
+**Doc:** [https://api.hexoskin.com/docs/resource/datafile/](https://api.hexoskin.com/docs/resource/datafile/)
+
+### Label
+
+**Doc:** [https://api.hexoskin.com/docs/resource/label/](https://api.hexoskin.com/docs/resource/label/)
+
+### Labelled Object
+
+**Doc:** [https://api.hexoskin.com/docs/resource/labelledobject/](https://api.hexoskin.com/docs/resource/labelledobject/)
+
+### Report
+
+**Doc:** [https://api.hexoskin.com/docs/resource/report/](https://api.hexoskin.com/docs/resource/report/)
+
+### Template Report
+
+**Doc:** [https://api.hexoskin.com/docs/resource/templatereport/](https://api.hexoskin.com/docs/resource/templatereport/)
+
+### Share
+
+**Doc:** [https://api.hexoskin.com/docs/resource/share/](https://api.hexoskin.com/docs/resource/share/)
+
+### Share Type
+
+**Doc:** [https://api.hexoskin.com/docs/resource/sharetype/](https://api.hexoskin.com/docs/resource/sharetype/)
+
+### Statistics
+
+**Doc:** [https://api.hexoskin.com/docs/resource/statistics/](https://api.hexoskin.com/docs/resource/statistics/)
+
+### Team
+
+**Doc:** [https://api.hexoskin.com/docs/resource/team/](https://api.hexoskin.com/docs/resource/team/)
+
+### Template Report
+
+**Doc:** [https://api.hexoskin.com/docs/resource/templatereport/](https://api.hexoskin.com/docs/resource/templatereport/)
