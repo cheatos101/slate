@@ -46,9 +46,9 @@ If you're new to using APIs, you're at the right place. You'll need to understan
 For those still here, REST stands for [REpresentational State Transfer](http://en.wikipedia.org/wiki/Representational_state_transfer) and describes a way to make data accessible, generally via the Internet. A website like [http://hexoskin.com](http://hexoskin.com) is something you're most likely already comfortable with. It's a page that contains some information. To go to the developer section of the website, you can obviously click on a few button, but you can also add [/pages/developers](http://hexoskin.com/pages/developers) to the previous URL, and you'll end up in the developer section. You just went from the general website to the developer-oriented page.
 A REST API works in a very similar fashion. The entry point of the REST API is `https://api.hexoskin.com/api/v1/`, and appending information at the end will bring you further down. For example, asking for `https://api.hexoskin.com/api/v1/account/` will return you your own account's information. The information is returned as a JSON object, a standard format for such kind of information.
 
-Something quite neat about REST APIs is that you can add arguments that will modify what the REST API returns to you. For example, take `https://api.hexoskin.com/api/v1/trainingroutine/`. The response you receive will contain all training routines available to perform. But what if you want to look at the training routines that you have used? Well, looking at the trainingroutine documentation (`https://api.hexoskin.com/docs/resource/trainingroutine/`), you see that there is a filter just for that. You can then query `https://api.hexoskin.com/api/v1/trainingroutine/?using=True`, and voilà, you have used a filter to modify what the REST API returns to you.
+Something quite neat about REST APIs is that you can add arguments that will modify what the REST API returns to you. For example, take `https://api.hexoskin.com/api/v1/trainingroutine/`. The response you receive will contain all training routines available to perform. But what if you want to look at the training routines that you have used? Well, looking at the trainingroutine documentation [https://api.hexoskin.com/docs/resource/trainingroutine/](https://api.hexoskin.com/docs/resource/trainingroutine/), you see that there is a filter just for that. You can then query `https://api.hexoskin.com/api/v1/trainingroutine/?using=True`, and voilà, you have used a filter to modify what the REST API returns to you.
 
-One final thing to mention : While your web browser will allow you to fetch information from regular websites, our REST API requires additionnal information that the browser doesn't provide. To interact with the REST API, you need to be using some programming language that allows you to specify some headers to the HTTP request you are making. That will allow you to GET, POST information, DELETE and PATCH some resources that you want modified. This documentation provides example HTTP requests, without regard to the actual implementation in a specific programming language.
+One final thing to mention : While your web browser will allow you to fetch information from regular websites, our REST API requires additional information that the browser doesn't provide. To interact with the REST API, you need to be using some programming language that allows you to specify some headers to the HTTP request you are making. That will allow you to GET, POST information, DELETE and PATCH some resources that you want modified. This documentation provides example HTTP requests, without regard to the actual implementation in a specific programming language.
 
 # Getting started
 
@@ -64,14 +64,14 @@ We have attempted to conform to RESTful practices as much as is practical. There
 For example, the 25th May of 2006 12:00:00pm is represented, in UNIX timestamps, as 1414690957. That times 256 is 362160884992, which is the 25th May 2006 12:00:00 in HexoTimestamp format.
 ```
 
-Timestamps are represented a little differently than is usual. Instead of representing the number of seconds since Jan 1, 1970 UTC (UNIX timestamps), they represent the number of 256ths of a second since Jan 1, 1970 12:00:00pm UTC. In other words, they are a regular timestamp multiplied by 256. All timestamps in the system are like this unless explicity noted otherwise. This modification allows the ECG's timestamps to be stored as integers, since it has the highest samplig rate, at 256Hz.
+Timestamps are represented a little differently than is usual. Instead of representing the number of seconds since Jan 1, 1970 UTC (UNIX timestamps), they represent the number of 256ths of a second since Jan 1, 1970 12:00:00pm UTC. In other words, they are a regular timestamp multiplied by 256. All timestamps in the system are like this unless explicity noted otherwise. This modification allows the ECG's timestamps to be stored as integers, since it has the highest sampling rate, at 256Hz.
 
 ## Making Requests
 
 All requests are conducted over SSL. Any non-SSL requests received are forwarded to HTTPS. All requests must be signed with a valid API key. All requests must be authenticated via Basic Auth or OAuth with the exception of createuserrequest.
 
 ```
-By default, all responses are returned as JSON. However, you can set your headers manually. The accepted headers for data format are:
+By default, all responses are returned as JSON. However data resources can be returned as JSON, CSV or binaries, so you can set your headers manually. The accepted headers for data format are:
 
     Accept: application/json
     Accept: application/octet-stream
@@ -120,7 +120,7 @@ The signature is a SHA1 hash of the the private key, timestamp, and the URL (the
 
 > A typical list view, this one taken from https://api.hexoskin.com/api/v1/datatype/ looks like:
 
-```
+```json
 {
     "meta": {
         "limit": 20,
@@ -144,7 +144,9 @@ The signature is a SHA1 hash of the the private key, timestamp, and the URL (the
             "name": "ECG_CHANNEL_CHAR",
             "resource_uri": "/api/v1/datatype/16/"
         },
-        {"dataid":"..."}
+        {
+            "dataid":"..."
+        }
     ]
 }
 ```
@@ -208,7 +210,9 @@ As you can see, the meta object tells us how to page through the data. You can r
                 "username": "athlete@hexoskin.com"
             }
         },
-        {"data":"..."}
+        {
+            "data":"..."
+        }
     ]
 }
 ```
@@ -257,7 +261,7 @@ Note that the detail view does not contain a meta and object attribute, the reso
 
 ## Create, Update and Delete
 
-> For example, a POST on annotation with the following content: {'datatype': '4096', 'start': 123456, 'user': 835, 'annotation': 'Hey guys!'} will return
+> For example, a POST on annotation with the following content: {'datatype': '4096', 'start': 123456, 'user': 835, 'annotation': 'Hey guys!'} will return the following content:
 
 ```json
 {
@@ -532,7 +536,7 @@ Although more complex, this method is much more efficient to implement for acces
         "next": "/api/v1/track/?limit=20&offset=20",
         "offset": 0,
         "previous": null,
-        "total_count": 1
+        "total_count": 10
     },
     "objects": [
         {
@@ -544,6 +548,9 @@ Although more complex, this method is much more efficient to implement for acces
             "resource_uri": "/api/v1/track/80/",
             "source": "",
             "user": "/api/v1/user/805/"
+        },
+        {
+            "area":"..."
         }
     ]
 }
@@ -578,8 +585,7 @@ Although more complex, this method is much more efficient to implement for acces
         },
         {
             "altitude": "..."
-        },
-        {"resource_uri":"..."}
+        }
     ]
 }
 ```
@@ -790,6 +796,9 @@ The full list of available datatypes is available through `api/v1/datatypes/?lim
                 [
                     361446243484,
                     1423
+                ],
+                [
+                    ...
                 ]
             ]
         },
@@ -831,6 +840,9 @@ The Heart rate status shows various flags related to signal quality to help you 
                 [
                     361446243484,
                     1423
+                ],
+                [
+                    ...
                 ]
             ]
         },
@@ -840,6 +852,8 @@ The Heart rate status shows various flags related to signal quality to help you 
 ```
 
 **Doc:** [https://api.hexoskin.com/docs/resource/ecg/](https://api.hexoskin.com/docs/resource/ecg/)
+
+<img src="images/screen_ECG.png" />
 
 ###  Heart rate
 
@@ -882,8 +896,7 @@ From the raw respiration sensor measurements, we automatically detect Expiration
                     571.04
                 ],
                 [
-                    359840228918,
-                    571.04
+                    ...
                 ]
             ]
         },
@@ -896,6 +909,8 @@ From the raw respiration sensor measurements, we automatically detect Expiration
 ### Respiration Raw Data
 
 **Doc:** [https://api.hexoskin.com/docs/resource/respiration/](https://api.hexoskin.com/docs/resource/respiration/)
+
+<img src="images/screen_resp.png" />
 
 ### Breathing rate
 
@@ -948,8 +963,7 @@ Finally, Sleep Positions are calculated during sleep.
                     5
                 ],
                 [
-                    362306336628,
-                    1
+                    ...
                 ]
             ]
         },
@@ -959,6 +973,8 @@ Finally, Sleep Positions are calculated during sleep.
 ```
 
 **Doc:** [https://api.hexoskin.com/docs/resource/acc/](https://api.hexoskin.com/docs/resource/acc/)
+
+<img src="images/screen_acc.png" />
 
 ### Activity
 
@@ -1167,9 +1183,17 @@ Trackpoints are the actual GPS locations measured by the phone during the range.
 
 **Doc:** [https://api.hexoskin.com/docs/resource/async/](https://api.hexoskin.com/docs/resource/async/)
 
+### Device
+
+[https://api.hexoskin.com/docs/resource/device/](https://api.hexoskin.com/docs/resource/device/)
+
 ### Metrics
 
 **Doc:** [https://api.hexoskin.com/docs/resource/metric/](https://api.hexoskin.com/docs/resource/metric/)
+
+### Report
+
+**Doc:** [https://api.hexoskin.com/docs/resource/report/](https://api.hexoskin.com/docs/resource/report/)
 
 ### Training Routine
 
@@ -1233,7 +1257,9 @@ In this section, User Resources are endpoints used to access some User-related i
 
 [https://api.hexoskin.com/docs/resource/bundle_permission_request/](https://api.hexoskin.com/docs/resource/bundle_permission_request/)
 
-## Operations
+## User-related Operations
+
+These operations are not actual resources, in the sense that they trigger a process on the server, but you should not expect a response from them.
 
 ### Change Email
 
@@ -1258,17 +1284,27 @@ In this section, User Resources are endpoints used to access some User-related i
 
 # Astroskin-specific resources
 
+The Astroskin is a modified version of the Hexoskin that embeds a Pulse Oxymetry sensor, a 3-lead ECG, and a skin temperature sensor. More details available at [http://www.asc-csa.gc.ca/eng/sciences/astroskin.asp](http://www.asc-csa.gc.ca/eng/sciences/astroskin.asp)
+
 ### Pulse Oximetry Heart Rate
 
 **Doc:** [https://api.hexoskin.com/docs/resource/pohr/](https://api.hexoskin.com/docs/resource/pohr/)
+
+This resource is the heart rate as measured by the pulse oxymetry sensor.
 
 ### PPG
 
 **Doc:** [https://api.hexoskin.com/docs/resource/ppg/](https://api.hexoskin.com/docs/resource/ppg/)
 
+The PPG, or PhotoPlethysmoGram, is the raw photoplethysmograph sensor measurement.
+
+<img src="images/screen_ppg.png" />
+
 ### PTT
 
 **Doc:** [https://api.hexoskin.com/docs/resource/ptt/](https://api.hexoskin.com/docs/resource/ptt/)
+
+PTT, or Pulse Transit Time, represents the transit time between the heart beat measured by the ECG electrodes and the heart beat measured from the forehead sensor. This value helps compute the Systolic pressure value.
 
 ### SPO2
 
@@ -1297,10 +1333,6 @@ In this section, User Resources are endpoints used to access some User-related i
 
 [https://api.hexoskin.com/docs/resource/activitylog/](https://api.hexoskin.com/docs/resource/activitylog/)
 
-### Device
-
-[https://api.hexoskin.com/docs/resource/device/](https://api.hexoskin.com/docs/resource/device/)
-
 ### OAuth Access Token
 
 [https://api.hexoskin.com/docs/resource/oauthaccesstoken/](https://api.hexoskin.com/docs/resource/oauthaccesstoken/)
@@ -1328,10 +1360,6 @@ In this section, User Resources are endpoints used to access some User-related i
 ### Labelled Object
 
 **Doc:** [https://api.hexoskin.com/docs/resource/labelledobject/](https://api.hexoskin.com/docs/resource/labelledobject/)
-
-### Report
-
-**Doc:** [https://api.hexoskin.com/docs/resource/report/](https://api.hexoskin.com/docs/resource/report/)
 
 ### Template Report
 
